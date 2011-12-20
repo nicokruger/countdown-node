@@ -1,17 +1,21 @@
 /* Modules */
 var jsdom = require("jsdom");
 var fs = require("fs");
-var http = require("http");
-var nodeStatic = require("node-static");
-var bee = require("beeline");
 
-// Static file server
-var file = new (nodeStatic.Server)("./");
+var content = {
+	html: fs.readFileSync("./index.html").toString(),
+	scripts: [
+		fs.readFileSync("./public/vendor/jquery-1.6.2.min.js"),
+		fs.readFileSync("./public/vendor/underscore.js"),
+		fs.readFileSync('./public/timo/led.js'),
+		fs.readFileSync('./public/timo/timer.js'),
+		fs.readFileSync('./public/timo/countdown.js'),
+		fs.readFileSync('./public/timo/times.js'),
+		fs.readFileSync('./public/model.js')
+	]
+};
 
-var x = function (req, resp) {
-	console.log("run1");
-
-	var appScripts = [
+/*	var appScripts = [
 		"./public/vendor/jquery-1.6.2.min.js",
 		"./public/vendor/underscore.js",
 		'./public/timo/led.js',
@@ -21,57 +25,56 @@ var x = function (req, resp) {
 		'./public/model.js'
 	];
 
-	console.log("run2");
+	var html = "./index.html"; //fs.readFileSync("index.html").toString(),
+*/
 
-	jsdom.env({
-			html: fs.readFileSync("index.html").toString(),
-			scripts: appScripts
-		},
-		function (errors,window) {
-			console.log("Errors: " + errors + " - " + window.$ + " - " + window.model);
-			var $ = window.$;
-			var model = window.model;
-			window.console = console;
+var x = function (req, resp, completed) {
+	process.nextTick(function () {
 
-			//$.ajax
 
-			//var m = model($("#countdownlist"));
-			console.log("----" + model);
-
-			var m = model($("#countdownlist"));
-			console.log("B: " + m.putCountdown);
-
-			for (var i = 0; i < 10; i++) {
-				console.log("Adding: " + i + " - " + m);
-				m.putCountdown({url:"URL" + i, eventDate: 0, name: "Counter" + i, tags:[]});
+		var client = jsdom.jsdom(content.html, null, {
+			// set features to false to parse initial html
+			features: {
+				'FetchExternalResources':false,
+				'ProcessExternalResources':false
 			}
-			
-			resp.writeHead(200, {"Content-type":"text/html"});
-			resp.end(window.document.innerHTML);
+		});
+		
+		var w = client.createWindow();
+
+		// reset features for loading
+		w.document.implementation.addFeature("FetchExternalResources", ["script"]);
+		w.document.implementation.addFeature("ProcessExternalResources", ["script"]);
+
+		var scriptsDone = 0;
+		var totalScripts = content.scripts.length;
+		var scriptLoaded = function () {
+			scriptsDone++;
+			if (scriptsDone >= totalScripts) {
+				completed(resp, w);
+			}
+		};
+
+		content.scripts.forEach(function (s) {
+			console.log("script!");
+			var script = w.document.createElement("script");
+			script.onload = function () {
+				console.log("script loaded!");
+				scriptLoaded();
+			};
+			script.onerror = function () {
+				console.log("script error!");
+				scriptLoaded();
+			};
+
+			//console.log("Source: " + s);
+			script.text = s;
+			w.document.documentElement.appendChild(script);
+			w.document.documentElement.removeChild(script);
+		});
+
+		client = undefined; // help v8 GC?
 	});
 };
 
-// Router
-var router = bee.route({
-	"r`^/public.*`" : function(req,res) {
-		console.log("serve public");
-		file.serve(req,res);
-	},
-	"r`^/$`" : function (req,res) {
-		console.log("client");
-		x(req,res);
-	},
-
-	"`404`" : function (req,res) {
-		console.log("serve 404");
-		file.serveFile("/404.html", 404, {}, req, res);
-	},
-
-	"`503`" : function (req,res) {
-		console.log("serve 503");
-		file.serveFile("/503.html", 503, {}, req, res);
-	}
-});
-
-http.createServer(router).listen(8080, "127.0.0.1");
-
+exports.client = x;
