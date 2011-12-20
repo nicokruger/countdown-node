@@ -1,0 +1,6 @@
+[submodule "vendor"]
+	path = vendor
+	url = git@github.com:nicokruger/common-js-libs
+[submodule "timo"]
+	path = timo
+	url = git@github.com:nicokruger/timo-js

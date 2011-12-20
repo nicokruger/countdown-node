@@ -1,0 +1,130 @@
+body {
+    background: #000000;
+}
+
+.seperator {
+    font-size: 16px;
+    margin-left:5px;
+    margin-right:5px;
+    color: rgb(0, 0, 0);
+}
+
+.timer {
+    font-size: 32px;
+    color: rgb(82, 139, 183);
+}
+
+#countdownlist {
+    list-style: none;
+    margin: 0 auto;
+    width: 800px;
+    background-color: #ffffff;
+    padding-top: 10px;
+}
+
+#buttonbar {
+    border-bottom: 1px solid #efefef;
+    border-top: 1px solid #efefef;
+    margin: 0 auto;
+    width: 600px;
+    padding: 15px;
+}
+
+li.countdown {
+    padding: 0px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #000000;
+    width: 800px;
+    overflow: auto;
+}
+
+h5.countdown {
+    font-size: 16px;
+}
+
+#newcountdown {
+    margin: 10px;
+    padding: 20px;
+}
+
+div.header {
+    padding: 20px;
+    text-align: center;
+}
+
+span.header {
+    padding: 10px;
+    text-align: center;
+    display:block;
+}
+
+h1 {
+    margin: 0 auto;
+    font-size: 24px;
+}
+
+#mainview {
+    width: 850px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding-bottom: 20px;
+}
+
+.footnote {
+    padding: 50px;
+}
+
+#headerbar {
+    margin: 0 auto;
+    width: 800px;
+    background-color: #ffffff;
+}
+
+span.countdown {
+    display: block;
+    float: left;
+    width: 400px;
+    margin: 0px;
+    padding: 0px;
+}
+span.countdown-name {
+    display: block;
+    width: 300px;
+    float: left;
+    margin: 0px;
+    padding: 0px;
+    font-size: large;
+    font-weight: normal;
+    color: grey;
+}
+span.countdown-tags {
+    display: block;
+    float: left;
+    width: 70px;
+    margin: 0px;
+    padding: 0px;
+    font-size: small;
+    color: grey;
+}
+
+.button, .button:visited {
+    text-decoration: none;
+    
+    color: #333;
+    border-color :#AAA;
+    background: #F5F5F1 url("img/light-shade.png") 0 .9em repeat-x;
+    padding: 2px 8px;
+    display: inline-block;
+    border: 1px solid #91918E;
+}
+
+.button:hover, .button:active, .button:focus {
+    background-color: white;
+    text-decoration: none;
+    border-color: #AAA;    
+    color: #000;
+}
+
+a.visited {
+    color: #000;
+}

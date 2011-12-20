@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>When Is - Release dates for games, movies, music and sports</title>
+    <meta charset=utf-8 /> 
+    
+    <!-- vendor scripts -->
+    <script src="public/vendor/jquery-1.6.2.min.js"></script>
+    <script src="public/vendor/underscore.js"></script>
+    <script src="public/vendor/date.js"></script>
+
+    <!-- led scripts -->
+    <script src="public/timo/led.js"></script>
+    <script src="public/timo/timer.js"></script>
+    <script src="public/timo/countdown.js"></script>
+    <script src="public/timo/times.js"></script>
+
+    <!-- main script -->
+    <script src="public/index.js"></script>
+    <script src="public/model.js"></script>
+    <script src="public/actions.js"></script>
+
+    <link rel="stylesheet" href="public/style.css" />
+    <link rel="stylesheet" href="public/whenis.css" />
+</head>
+
+<body>
+
+<div id="mainview">
+    <div id="headerbar">
+        <h1 >
+            <div class="header">When Is?</div>
+            <span class="header" style="font-weight: normal; font-size: small">Release dates for movies, games, music, sports and everthing in between</span>
+        </h1>
+        <div id="buttonbar">
+            <a class="button" href="add.html">+</a>
+            <input id="searchbox" autofocus type="text" name="name" id="searchName" value="" />
+            <a class="button" href="/random" id="random">Random</a>
+            <a class="button" href="/day" id="fetchDay">Day</a>
+            <a class="button" href="/week" id="fetchWeek">Week</a>
+            <a class="button" href="/month" id="fetchMonth">Month</a>
+            <a class="button" href="/year" id="fetchYear">Year</a>
+        </div>
+    </div>
+
+    <div class="main-item">
+        <ul id="countdownlist">
+        </ul>
+        
+        <div id="info">
+        </div>
+    </div>
+
+
+    <div class="footnote">When Is aims to be a general-purpose service for use in tracking important dates, such as game release dates, movie release dates, television
+    schedules, album releases, etc. It is community driven and welcomes any and all contributions.
+    <div>
+</div>
+
+
+</div>
+
+
+</body>
+
+
+</html>
