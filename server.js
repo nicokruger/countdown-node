@@ -7,19 +7,17 @@ var http = require("http");
 var file = new (nodeStatic.Server)("./");
 
 var putCountdowns = function (resp, window) {
+	//window.m.clear();
+	//for (var i = 0; i < 20; i++) {
+	//	console.log("countdown: " + i);
+	//	window.m.putCountdown({url:"URL" + i, name: "Countdown" + i, eventDate:0, tags:[]});
+	//}
 
-	console.log("M: " + window.m);
-	window.m.clear();
-
-	for (var i = 0; i < 20; i++) {
-		console.log("countdown: " + i);
-		window.m.putCountdown({url:"URL" + i, name: "Countdown" + i, eventDate:0, tags:[]});
-	}
-
-
-	resp.writeHead(200, {"Content-type":"text/html"});
-	resp.end(window.document.innerHTML);
-	
+	window.c.clear();
+	window.c.nextMonth(function () {
+		resp.writeHead(200, {"Content-type":"text/html"});
+		resp.end(window.document.innerHTML);
+	});
 };
 
 

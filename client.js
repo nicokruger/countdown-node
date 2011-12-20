@@ -1,29 +1,38 @@
 /* Modules */
 var jsdom = require("jsdom");
 var fs = require("fs");
+var sys = require("sys");
+var X = require("./XMLHttpRequest.js");
+var XMLHttpRequest = X.XMLHttpRequest;
+//global.XMLHttpRequest = X.XMLHttpRequest;
 
 var content = {
 	html: fs.readFileSync("./index.html").toString(),
 	scripts: [
-		fs.readFileSync("./public/vendor/jquery-1.6.2.min.js"),
+		fs.readFileSync("./public/vendor/jquery-1.7.1.min.js"),
 		fs.readFileSync("./public/vendor/underscore.js"),
 		fs.readFileSync('./public/timo/led.js'),
 		fs.readFileSync('./public/timo/timer.js'),
 		fs.readFileSync('./public/timo/countdown.js'),
 		fs.readFileSync('./public/timo/times.js'),
-		fs.readFileSync('./public/model.js')
+		fs.readFileSync('./public/model.js'),
+		fs.readFileSync('./public/controller.js')
 	]
 };
 
 var completed = function (window) {
-	console.log("done");
-	console.log("Model: " + window.model);
-	var model = window.model;
 	var $ = window.$;
+	var model = window.model;
+	var controller = window.controller;
 	var m = model($("#countdownlist"));
+	var c = controller(m, "http://localhost:55555");
+
+	console.log(c);
 
 	window.m = m;
-	
+	window.c = c;
+	window.console = console;
+
 	exports.window = window;
 };
 
@@ -39,6 +48,8 @@ var load = function () {
 		});
 		
 		var w = client.createWindow();
+		w.console = console;
+		w.XMLHttpRequest = XMLHttpRequest;
 
 		// reset features for loading
 		w.document.implementation.addFeature("FetchExternalResources", ["script"]);
@@ -54,10 +65,8 @@ var load = function () {
 		};
 
 		content.scripts.forEach(function (s) {
-			console.log("script!");
 			var script = w.document.createElement("script");
 			script.onload = function () {
-				console.log("script loaded!");
 				scriptLoaded();
 			};
 			script.onerror = function () {

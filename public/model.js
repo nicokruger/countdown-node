@@ -7,8 +7,7 @@ var ledColors = {
 
 var emptyHtml = "<h1>Nothing to see here...</h1>";
 
-var model = function (countdownHolder) {
-    
+var model = function (countdownHolder, server) {
     return {
         
         countdowns: [],
@@ -60,7 +59,6 @@ var model = function (countdownHolder) {
             $(outside).append('<span class="ui-li-count countdown-tags">' + c.tags + '</span>');
             
             countdown(cd, c.eventDate, 24, 32, ledColors);
-            console.log("1");
             
             return $(outside);
 

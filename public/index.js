@@ -2,7 +2,8 @@
 $(function () {
   console.log("readyFunc");
   var m = model($("#countdownlist"));
-  var action = actions(m);
+  var c = controller(m, "http://localhost:55555");
+  var action = actions(c);
 
   $("#random").click(action.random);
 
@@ -24,5 +25,24 @@ $(function () {
   });
 });
     
-
+var parseSearchData = function (text) {
+    var i =  _(text.split(' ')).chain().reduce(function (o, ww) {
+        if (ww[0] == "#") {
+            o.tags.push(ww.slice(1, o.length));
+        } else {
+            o.names.push(ww);
+        }
+        return o;
+    }, {names: [], tags: []}).value();
     
+    var sd = {};
+    
+    if (i.tags.length > 0) {
+        sd.tags = i.tags.join(",");
+    }
+    if (i.names.length > 0) {
+        sd.name = i.names.join(" ");
+    }
+    return (i.names.length > 0 || i.tags.length > 0) ? sd : { name: "" };
+};
+

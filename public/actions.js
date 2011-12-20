@@ -1,50 +1,23 @@
-var actions = function (model) {
+var actions = function (controller) {
     
-
+    // TODO: This is broken atm
     window.onpopstate = function (e) {
         if (e.state && e.state.url) {
             countdownAction(e.state.url, e.state.data, e.state.method);
         }
     };
     
-    var historyAction = function (e, url, data, method, success) {
+    var historyAction = function (e, retrieveData, url, data, method) {
         if (!(window.history && history.pushState)) {
             return;
         }
         
         e.preventDefault();
-        countdownAction(url, data, method, function () {
-            if (success !== undefined) {
-                success();
-            }
+        
+        retrieveData(function () {
             history.pushState({"url": url, "data" : data, "method" : method}, "", url);
         });
-    };
-    
-    var countdownAction = function (url, data, method, success) {
-        $.ajax({
-            url: url,
-            data: data,
-            type: method,
-            dataType: "json",
-            success: function (o) {
-                model.clear();
-                if (o.hasOwnProperty("countdowns")) {
-                    model.putCountdowns(o.countdowns);
-                } else {
-                    model.putCountdown(o);
-                }
 
-                if (success !== undefined) {
-                    success(o);
-                }
-            },
-            error: function (e) {
-                alert("an error occurred");
-                
-                $("#info").html("An error occurred... Please try again");
-            }
-        });
     };
     
     var timeSearch = function (endTime) {
@@ -61,54 +34,33 @@ var actions = function (model) {
     
     return {
         clear: function (e) {
-            model.clear();
+            controller.clear();
         },
         
         random: function (e) {
-            historyAction(e, "/random", {}, "GET");
+            historyAction(e, controller.random, "/random", {}, "GET");
         },
         nextDay: function (e) {
-            historyAction(e, "/day", {}, "GET", function () { });
+            historyAction(e, controller.nextDay, "/day", {}, "GET");
         },
         nextWeek: function (e) {
-            historyAction(e, "/week", {}, "GET", function () { });
+            historyAction(e, controller.nextWeek, "/week", {}, "GET");
         },
         nextMonth: function (e) {
-            historyAction(e, "/month", {}, "GET", function () { });
+            historyAction(e, controller.nextMonth, "/month", {}, "GET");
         },
         nextWeekend: function (e) {
-            historyAction(e, "/weekend", {}, "GET", function () { });
+            historyAction(e, controller.nextWeekend, "/weekend", {}, "GET");
         },
         nextYear: function (e) {
-            historyAction(e, "/year", {}, "GET", function () { });
+            historyAction(e, controller.nextYear, "/year", {}, "GET");
         },
         
         search: function(data) {
-            countdownAction("/countdowns", data, "GET");
+            controller.search(data);
         }
 
                 
     };
-};
-
-var parseSearchData = function (text) {
-    var i =  _(text.split(' ')).chain().reduce(function (o, ww) {
-        if (ww[0] == "#") {
-            o.tags.push(ww.slice(1, o.length));
-        } else {
-            o.names.push(ww);
-        }
-        return o;
-    }, {names: [], tags: []}).value();
-    
-    var sd = {};
-    
-    if (i.tags.length > 0) {
-        sd.tags = i.tags.join(",");
-    }
-    if (i.names.length > 0) {
-        sd.name = i.names.join(" ");
-    }
-    return (i.names.length > 0 || i.tags.length > 0) ? sd : { name: "" };
 };
 
