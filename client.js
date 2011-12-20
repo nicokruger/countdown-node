@@ -15,22 +15,20 @@ var content = {
 	]
 };
 
-/*	var appScripts = [
-		"./public/vendor/jquery-1.6.2.min.js",
-		"./public/vendor/underscore.js",
-		'./public/timo/led.js',
-		'./public/timo/timer.js',
-		'./public/timo/countdown.js',
-		'./public/timo/times.js',
-		'./public/model.js'
-	];
+var completed = function (window) {
+	console.log("done");
+	console.log("Model: " + window.model);
+	var model = window.model;
+	var $ = window.$;
+	var m = model($("#countdownlist"));
 
-	var html = "./index.html"; //fs.readFileSync("index.html").toString(),
-*/
+	window.m = m;
+	
+	exports.window = window;
+};
 
-var x = function (req, resp, completed) {
+var load = function () {
 	process.nextTick(function () {
-
 
 		var client = jsdom.jsdom(content.html, null, {
 			// set features to false to parse initial html
@@ -51,7 +49,7 @@ var x = function (req, resp, completed) {
 		var scriptLoaded = function () {
 			scriptsDone++;
 			if (scriptsDone >= totalScripts) {
-				completed(resp, w);
+				completed(w);
 			}
 		};
 
@@ -72,9 +70,9 @@ var x = function (req, resp, completed) {
 			w.document.documentElement.appendChild(script);
 			w.document.documentElement.removeChild(script);
 		});
-
-		client = undefined; // help v8 GC?
 	});
-};
+}();
 
-exports.client = x;
+exports.client = function (req, resp, makeClient) {
+	makeClient(resp, this.window);
+};
