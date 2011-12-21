@@ -3,7 +3,7 @@ var actions = function (controller) {
     // TODO: This is broken atm
     window.onpopstate = function (e) {
         if (e.state && e.state.url) {
-            countdownAction(e.state.url, e.state.data, e.state.method);
+            controller.countdownAction(e.state.url, e.state.data, e.state.method);
         }
     };
     

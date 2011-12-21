@@ -62,7 +62,8 @@ var controller = function (model, server) {
         },
         countdown: function (id, callback, failure) {
             countdownAction("?" + id, {}, "GET", callback, failure);
-        }
+        },
+        countdownAction: countdownAction
 
     };
 };
