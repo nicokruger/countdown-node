@@ -1,8 +1,9 @@
 
+
 $(function () {
   console.log("readyFunc");
   var m = model($("#countdownlist"));
-  var c = controller(m, "http://localhost:55555");
+  var c = controller(m, "http://" + window.location.hostname + ":55555");
   var action = actions(c);
 
   $("#random").click(action.random);

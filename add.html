@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>When Is - Release dates for games, movies, music and sports</title>
+    <meta charset=utf-8 /> 
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" />
+    
+    <!-- vendor scripts -->
+    <script src="public/vendor/jquery-1.7.1.min.js"></script>
+    <script src="public/vendor/underscore.js"></script>
+    <script src="public/vendor/date.js"></script>
+
+    <!-- led scripts -->
+    <script src="public/timo/led.js"></script>
+    <script src="public/timo/timer.js"></script>
+    <script src="public/timo/countdown.js"></script>
+    <script src="public/timo/times.js"></script>
+
+    <!-- main script -->
+    <script src="public/index.js"></script>
+    <script src="public/model.js"></script>
+    <script src="public/actions.js"></script>
+    <script src="public/controller.js"></script>
+
+    <link rel="stylesheet" href="public/style.css" />
+    <link rel="stylesheet" href="public/whenis.css" />
+    
+    <script>
+    
+    $(function () {
+        $("#newcountdownForm").bind("submit", newCountdown);
+    });
+    
+    var newCountdown = function (e) {
+        e.preventDefault();
+        var ed;
+        try {
+            ed = Date.parseExact($("#countdownDatetime").val(), "yyyy-MM-ddTHH:mm");
+        } catch (err) {
+            alert("cannot parse date: " + err);
+            return;
+        }
+        
+        if (ed == null ) {
+            alert("invalid date");
+            return;
+        }
+        var data = {
+            name: $("#countdownName").val(),
+            tags: $("#countdownTags").val(),
+            eventDate:  ed.getTime()
+        };
+
+        $.ajax({
+            url: "http://" + window.location.hostname + ":55555/countdown/new", 
+            data: data,
+            type: "POST",
+            dataType: "json",
+            success: function (o) {
+                window.location.href = "/" + o.countdowns[0].url;
+            }, 
+            error: function (e) {
+                $("#info").html("An error occurred... Please try again");
+            }
+        });
+    };
+        
+    </script>
+</head>
+
+<body>
+
+    <div id="mainview">
+        <div id="newcountdown">
+            <div>
+                <h5>Add countdown</h5>
+            </div>
+            
+            <div>
+                <form id="newcountdownForm">
+                
+                    <div>
+                        <label for="name">Name:</label>
+                        <input required type="text" name="name" id="countdownName" value="" />
+                    </div>
+                    
+                    <div>
+                        <label for="tags">Tags:</label>
+                        <input type="text" name="tags" id="countdownTags" value="" />
+                    </div>
+                    
+                    <div>
+                        <label for="tags">When<br/><span style="font-size: small"> (YY-MM-DDThh:mm eg. 2011-12-01T13:00)</span></label>
+                        <input required type="datetime-local" name="datetime" id="countdownDatetime" value="" />
+                    </div>
+                    
+                    <button type="submit">Add countdown</a>
+                    
+                </form> 
+                
+            </div>
+            
+            <div id="info">
+            </div>
+    </div>
+</body>
+</html>

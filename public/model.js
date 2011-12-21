@@ -28,6 +28,7 @@ var model = function (countdownHolder, server) {
                 $(countdownHolder).html(emptyHtml);
                 return;
             }
+            $(countdownHolder).html(""); // clear
             var that = this;
             _(countdowns).each(function (countdown) {
                 that._putCountdown(countdown);
@@ -53,7 +54,7 @@ var model = function (countdownHolder, server) {
             }
 
             //outside = $("<div></div>").appendTo(outside);
-            $(outside).append("<span class=\"countdown-name\"><a href=\"/?" + c.url + "\">" + c.name + "</a></span>");
+            $(outside).append("<span class=\"countdown-name\"><a href=\"/" + c.url + "\">" + c.name + "</a></span>");
             //$(outside).append("<span class=\"countdown\" id=\"" + c.url + "\"></span>");
             var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
             $(outside).append('<span class="ui-li-count countdown-tags">' + c.tags + '</span>');
@@ -65,31 +66,6 @@ var model = function (countdownHolder, server) {
         },
         
         pending: 0,
-        
-        getCountdown: function (countdownInfo) {
-            
-            this.pending += 1;
-            var that = this;
-            $.ajax({
-                url: "/countdown/" + countdownInfo.url,
-                dataType: "json",
-                success: function (o) {
-                    that._putCountdown(o);
-                    that.pending -= 1;
-                    if (that.pending === 0 && _.isFunction(countdownHolder.listview)) {
-                        countdownHolder.listview("refresh");
-                    }
-                },
-                error: function (o) {
-                    that.pending -= 1;
-                    if (that.pending === 0 && _.isFunction(countdownHolder.listview)) {
-                        countdownHolder.listview("refresh");
-                        $(countdownHolder).show();
-                    }
-                    // TODO: handle the error
-                }
-            });
-        },
         
         clear: function () {
             this.countdowns = [];

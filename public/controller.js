@@ -2,7 +2,7 @@ var controller = function (model, server) {
     
     server = server === undefined ? "" : server;
 
-    var countdownAction = function (url, data, method, success) {
+    var countdownAction = function (url, data, method, success, failure) {
 
         $.ajax({
             url: server + url,
@@ -11,7 +11,14 @@ var controller = function (model, server) {
             type: method,
             dataType: "json",
             success: function (o) {
+                console.log("Received response: " + JSON.stringify(o));
                 model.clear();
+
+                if (o.hasOwnProperty("error")) {
+                    if (failure !== undefined) {
+                        failure(o.error);
+                    }
+                }
                 if (o.hasOwnProperty("countdowns")) {
                     model.putCountdowns(o.countdowns);
                 } else {
@@ -31,33 +38,37 @@ var controller = function (model, server) {
         clear: function (e) {
             model.clear();
         },
-        random: function (callback) {
-            countdownAction("/random", {}, "GET", callback);
+        random: function (callback, failure) {
+            countdownAction("/random", {}, "GET", callback, failure);
         },
-        nextDay: function (callback) {
-            countdownAction("/day", {}, "GET", callback);
+        nextDay: function (callback, failure) {
+            countdownAction("/day", {}, "GET", callback, failure);
         },
-        nextWeek: function (callback) {
-            countdownAction("/week", {}, "GET", callback);
+        nextWeek: function (callback, failure) {
+            countdownAction("/week", {}, "GET", callback, failure);
         },
-        nextMonth: function (callback) {
-            countdownAction("/month", {}, "GET", callback);
+        nextMonth: function (callback, failure) {
+            console.log("Month");
+            countdownAction("/month", {}, "GET", callback, failure);
         },
-        nextWeekend: function (callback) {
-            countdownAction("/weekend", {}, "GET", callback);
+        nextWeekend: function (callback, failure) {
+            countdownAction("/weekend", {}, "GET", callback, failure);
         },
-        nextYear: function (callback) {
-            countdownAction("/year", {}, "GET", callback);
+        nextYear: function (callback, failure) {
+            countdownAction("/year", {}, "GET", callback, failure);
         },
         search: function(data) {
             countdownAction("/countdowns", data, "GET");
+        },
+        countdown: function (id, callback, failure) {
+            countdownAction("?" + id, {}, "GET", callback, failure);
         }
 
-	};
+    };
 };
 
 if (typeof(exports) !== "undefined") {
-	exports.controller = controller;
+    exports.controller = controller;
 }
 
 
