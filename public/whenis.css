@@ -97,6 +97,21 @@ span.countdown-name {
     font-weight: normal;
     color: grey;
 }
+span.countdown-name > a {
+    text-decoration: none;
+    display: inline-block;
+    font: normal normal normal 22px Arial, sans-serif;
+    /*color: rgb(82, 139, 183);*/
+    color: black;
+}
+span.countdown-name > a.visited {
+    text-decoration: none;
+    display: inline-block;
+    font: normal normal normal 22px Arial, sans-serif;
+    /*color: rgb(82, 139, 183);*/
+    color: black;
+}
+
 span.countdown-tags {
     display: block;
     float: left;
