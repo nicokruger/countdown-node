@@ -1,16 +1,15 @@
 body {
-    background: #000000;
 }
 
 .seperator {
-    font-size: 16px;
+    /*font-size: 16px;*/
     margin-left:5px;
     margin-right:5px;
     color: rgb(0, 0, 0);
 }
 
 .timer {
-    font-size: 32px;
+    /*font-size: 32px;*/
     color: rgb(82, 139, 183);
 }
 
@@ -23,7 +22,7 @@ body {
 }
 
 #buttonbar {
-    border-bottom: 1px solid #efefef;
+    /*border-bottom: 1px solid #efefef;*/
     border-top: 1px solid #efefef;
     margin: 0 auto;
     width: 600px;
@@ -33,13 +32,13 @@ body {
 li.countdown {
     padding: 0px;
     margin-bottom: 3px;
-    border-bottom: 1px solid #000000;
+    /*border-bottom: 1px solid #000000;*/
     width: 800px;
     overflow: auto;
 }
 
 h5.countdown {
-    font-size: 16px;
+    /*font-size: 16px;*/
 }
 
 #newcountdown {
@@ -60,7 +59,7 @@ span.header {
 
 h1 {
     margin: 0 auto;
-    font-size: 24px;
+    /*font-size: 24px;*/
 }
 
 #mainview {
@@ -93,14 +92,14 @@ span.countdown-name {
     float: left;
     margin: 0px;
     padding: 0px;
-    font-size: large;
+    /*font-size: large;*/
     font-weight: normal;
     color: grey;
 }
 span.countdown-name > a {
     text-decoration: none;
     display: inline-block;
-    font: normal normal normal 22px Arial, sans-serif;
+    /*font: normal normal normal 22px Arial, sans-serif;*/
     /*color: rgb(82, 139, 183);*/
     color: black;
 }
@@ -118,7 +117,7 @@ span.countdown-tags {
     width: 70px;
     margin: 0px;
     padding: 0px;
-    font-size: small;
+    /*font-size: small;*/
     color: grey;
 }
 

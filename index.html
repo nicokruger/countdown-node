@@ -22,46 +22,52 @@
     <script src="public/actions.js"></script>
     <script src="public/controller.js"></script>
 
-    <link rel="stylesheet" href="public/style.css" />
-    <link rel="stylesheet" href="public/whenis.css" />
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+    <link rel="stylesheet" href="public/whenis.css">
 </head>
 
 <body>
 
-<div id="mainview">
-    <div id="headerbar">
-        <h1 >
-            <div class="header">When Is?</div>
-            <span class="header" style="font-weight: normal; font-size: small">Release dates for movies, games, music, sports and everthing in between</span>
-        </h1>
-        <div id="buttonbar">
-            <a class="button" href="/add">+</a>
-            <input id="searchbox" type="text" name="name" value="" />
-            <a class="button" href="/random" id="random">Random</a>
-            <a class="button" href="/day" id="fetchDay">Day</a>
-            <a class="button" href="/week" id="fetchWeek">Week</a>
-            <a class="button" href="/month" id="fetchMonth">Month</a>
-            <a class="button" href="/year" id="fetchYear">Year</a>
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">When is</a>
+          <ul class="nav">
+                <li><a class="button" href="/add">+</a></li>
+                <li><input id="searchbox" type="text" name="name" value="" /></li>
+                <li><a class="button" href="/random" id="random">Random</a></li>
+                <li><a class="button" href="/day" id="fetchDay">Day</a></li>
+                <li><a class="button" href="/week" id="fetchWeek">Week</a></li>
+                <li><a class="button" href="/month" id="fetchMonth">Month</a></li>
+                <li><a class="button" href="/year" id="fetchYear">Year</a></li>
+          </ul>
+          <div class="pull-right">
+            Right
+          </div>
         </div>
+      </div>
     </div>
 
-    <div class="main-item">
-        <ul id="countdownlist">
-        </ul>
-        
-        <div id="info">
+    <div class="container" style="padding-top: 65px;">
+        <div class="content">
+            <div id="page-header">
+                <h1><small>Release dates for movies, games, music, sports and everthing in between</small></h1>
+            </div>
+
+            <div class="row">
+                <div class="span10">
+                    <ul id="countdownlist">
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                When Is aims to be a general-purpose service for use in tracking important dates, such as game release dates, movie release dates, television schedules, album releases, etc. It is community driven and welcomes any and all contributions.</div>
         </div>
+
+
+    <footer>The <a href="http://github.com/countdown">Countdown</a> team</footer>
     </div>
-
-
-    <div class="footnote">When Is aims to be a general-purpose service for use in tracking important dates, such as game release dates, movie release dates, television
-    schedules, album releases, etc. It is community driven and welcomes any and all contributions.
-    <div>
-</div>
-
-
-</div>
-
 
 </body>
 
