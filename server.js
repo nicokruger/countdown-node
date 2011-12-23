@@ -3,7 +3,6 @@ var client = require("./client");
 var bee = require("beeline");
 var nodeStatic = require("node-static");
 var http = require("http");
-var controller = require("./public/controller.js").controller;
 
 var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
@@ -11,7 +10,6 @@ var addHtml = fs.readFileSync("add.html").toString();
 
 // Static file server
 var file = new (nodeStatic.Server)("./");
-
 
 var putCountdowns = function (controllerAction) {
     return function (resp, window) {
@@ -98,11 +96,11 @@ var router = bee.route({
         file.serveFile("/404.html", 404, {}, req, res);
     },
 
-    "`503`" : function (req,res,err) {
-        console.error(err.stack);
-        file.serveFile("/503.html", 503, {}, req, res);
-    }
+	"`503`" : function (req,res,err) {
+		console.log("matched 503 because:");
+		console.error(err.stack);
+		file.serveFile("/503.html", 503, {}, req, res);
+	}
 });
-
 http.createServer(router).listen(8080, "127.0.0.1");
 
