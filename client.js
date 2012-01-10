@@ -1,7 +1,7 @@
 /* Modules */
 var jsdom = require("jsdom");
 var fs = require("fs");
-var sys = require("sys");
+var sys = require("util");
 var X = require("./XMLHttpRequest.js");
 var XMLHttpRequest = X.XMLHttpRequest;
 //global.XMLHttpRequest = X.XMLHttpRequest;
