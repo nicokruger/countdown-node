@@ -54,18 +54,32 @@ var model = function (countdownHolder, server) {
             }
 
 
-            $(outside).append('<span class="countdown-name"><a href=" + c.url + \">' + c.name + '</a>' +
-			      '<div class="inline-tweet"><a href="https://twitter.com/share" class="twitter-share-button" ' +
-			      'data-url="http://www.whenis.co.za/' + c.url + '">Tweet</a><div></span>');
+            $(outside).append('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>');
            
             var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
             $(outside).append('<span class="ui-li-count countdown-tags">' + c.tags + '</span>');
+	    
+	    $(outside).append('<div class="social_link_group">' +
+			      this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) +
+			      '</div>');
 
             countdown(cd, c.eventDate, 24, 32, ledColors);
             
             return $(outside);
 
         },
+	
+	_facebook_link : function(url) {
+	    return '<span><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
+	    'scrolling="no" frameborder="0" style="border:none; width:150px; height:20px"></iframe></span>';
+	},
+	_twitter_link : function(url) {
+	    return '<span><a href="https://twitter.com/share" class="twitter-share-button" ' +
+	    'data-url="http://www.whenis.co.za/' + url + '">Tweet</a></span>';
+	},
+	_plusone_link : function(url) {
+	    return '<span><g:plusone size="medium" annotation="inline" href="www.whenis.co.za/' + url + '"></g:plusone></span>';
+	},
         
         pending: 0,
         

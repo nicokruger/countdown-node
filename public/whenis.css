@@ -128,3 +128,8 @@ span.countdown-tags {
 a.visited {
     color: #000;
 }
+
+
+.social_link_group {
+    float: left;
+}
