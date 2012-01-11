@@ -60,16 +60,29 @@
     <div>
 </div>
 
+
+<script>
+
+var initScript = function(src) {
+   var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = src;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+};
 <!-- initialise twitter stuff -->
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  var initTwitter = function(){
+    initScript('http://platform.twitter.com/widgets.js');
+  };
 
 <!-- init +1 stuff -->
-<script type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
+  var initPlusOne = function(){
+   initScript('https://apis.google.com/js/plusone.js');
+ };
+
+  var initSocial = function(){
+    initTwitter();
+    initPlusOne();
+  };
+  
 </script>
 
 </div>
