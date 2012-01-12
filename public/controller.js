@@ -2,7 +2,7 @@ var controller = function (model, server) {
     
     server = server === undefined ? "" : server;
 
-    var countdownAction = function (url, data, method, success, failure) {
+    var countdownAction = function (url, data, method, success, failure, ogp) {
 
         $.ajax({
             url: server + url,
@@ -20,7 +20,12 @@ var controller = function (model, server) {
                     }
                 }
                 if (o.hasOwnProperty("countdowns")) {
-                    model.putCountdowns(o.countdowns);
+		    if(ogp === undefined) {
+			model.putCountdowns(o.countdowns);
+		    }
+		    else {
+			model.putCountdownOGP(o.countdowns[0]);
+		    }
                 } else {
                     model.putCountdown(o);
                 }
@@ -61,7 +66,7 @@ var controller = function (model, server) {
             countdownAction("/countdowns", data, "GET");
         },
         countdown: function (id, callback, failure) {
-            countdownAction("?" + id, {}, "GET", callback, failure);
+            countdownAction("?" + id, {}, "GET", callback, failure, true);
         },
         countdownAction: countdownAction
 

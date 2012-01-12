@@ -7,7 +7,7 @@ var ledColors = {
 
 var emptyHtml = "<h1>Nothing to see here...</h1>";
 
-var model = function (countdownHolder, server) {
+var model = function (countdownHolder, head) {
     return {
         
         countdowns: [],
@@ -34,12 +34,17 @@ var model = function (countdownHolder, server) {
                 that._putCountdown(countdown);
             });
         },
-        
         // adds a countdown, and refreshes the view
         putCountdown: function (c) {
             var o = this._putCountdown(c);
             return o;
         },
+	putCountdownOGP: function (c) {
+	    $(countdownHolder).html("");
+	    var o = this._putCountdown(c);
+	    var meta = this._ogp(c).metaTags();
+	    $(head).append(meta);
+	},
         
         //ads a countdown, does not refresh the view
         _putCountdown: function (c) {
@@ -78,6 +83,17 @@ var model = function (countdownHolder, server) {
 	},
 	_plusone_link : function(url) {
 	    return '<span><g:plusone size="medium" annotation="inline" href="www.whenis.co.za/' + url + '"></g:plusone></span>';
+	},
+	_ogp : function(c) {
+	    return {
+		title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
+		//this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
+		ogtype: '<meta name="og.type" content="website" />', 
+		url: '<meta name="og.url" content="http://www.whenis.co.za/' + c.url + '" />',
+		metaTags: function(){
+		    return [ this.title, this.ogtype, this.url, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
+		}
+	    };
 	},
         
         pending: 0,

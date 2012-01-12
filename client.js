@@ -9,7 +9,6 @@ var XMLHttpRequest = X.XMLHttpRequest;
 var content = {
 	html: fs.readFileSync("./index.html").toString(),
 	scripts: [
-		fs.readFileSync("./public/vendor/twitter_widgets.js"),
 		fs.readFileSync("./public/vendor/jquery-1.7.1.min.js"),
 		fs.readFileSync("./public/vendor/underscore.js"),
 		fs.readFileSync('./public/timo/led.js'),
@@ -25,7 +24,7 @@ var completed = function (window) {
 	var $ = window.$;
 	var model = window.model;
 	var controller = window.controller;
-	var m = model($("#countdownlist"));
+	var m = model($("#countdownlist"), $("head"));
 	var c = controller(m, "http://localhost:55555");
 
 	console.log(c);
