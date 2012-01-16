@@ -14,6 +14,7 @@ var addHtml = fs.readFileSync("add.html").toString();
 var file = new (nodeStatic.Server)("./");
 
 
+
 var putCountdowns = function (controllerAction) {
     return function (resp, window) {
         window.c.clear();
@@ -91,6 +92,13 @@ var router = bee.route({
                 c.search({"tags" : matches[0]}, callback);
             };
         }));
+    },
+    "/favicon.ico" : function (req,res) {
+        file.serve(req,res);
+    },
+
+    "/robots.txt" : function (req,res) {
+        file.serve(req,res);
     },
     "r`/(.+)`" : function (req, res, matches) {
         var id = matches[0];
