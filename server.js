@@ -4,6 +4,7 @@ var bee = require("beeline");
 var nodeStatic = require("node-static");
 var http = require("http");
 var controller = require("./public/controller.js").controller;
+//var timo = require("./public/controller.js").controller;
 
 var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();

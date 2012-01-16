@@ -1,13 +1,42 @@
 
-var ledColors = {
+var ledTheme = {
     lit: "rgba(82, 139, 183, 1.0)",
     unlit: "rgba(0, 0, 0, 0.0)",
-    outline: "rgba(0, 0, 0, 0.0)"
+    outline: "rgba(0, 0, 0, 0.0)",
+    width: 24,
+    height: 32
 };
 
 var emptyHtml = "<h1>Nothing to see here...</h1>";
+var formatDate = function (t) {
+    var d = new Date(t);
+    return d.getFullYear() + "-" + timo.pad(d.getMonth()+1,2) + "-" + timo.pad(d.getDay(),2) + " " + timo.pad(d.getHours(),2) + ":" + timo.pad(d.getMinutes(),2) + " UTC";
+};
 
-var model = function (countdownHolder, head) {
+var timoTypes = [timo.normalCounterType, timo.noCounterType, timo.ledCounterType(ledTheme)];
+
+var model = function (countdownHolder, head, timoCounterType) {
+    var countdownQuery = ".countdown-counter";
+    var counters;
+    var makeCounters = function () {
+        counters = timo.counters($(countdownQuery), timoCounterType);
+        $(countdownQuery).click(function () {
+            curTimoType++;
+            if (curTimoType >= timoTypes.length) {
+                curTimoType = 0;
+            }
+            counters.changeType(timoTypes[curTimoType]);
+        });
+    };
+    // find the current timo types' index
+    var curTimoType = 0;
+    for (var i = 0; i < timoTypes.length; i++) {
+        if (timoTypes[i] === timoCounterType) {
+            curTimoType = i;
+        }
+    }
+    //counters = timo.counters($(countdownQuery), timoCounterType);
+    makeCounters();
     return {
         
         countdowns: [],
@@ -33,10 +62,13 @@ var model = function (countdownHolder, head) {
             _(countdowns).each(function (countdown) {
                 that._putCountdown(countdown);
             });
+
+            makeCounters();
         },
         // adds a countdown, and refreshes the view
         putCountdown: function (c) {
             var o = this._putCountdown(c);
+            makeCounters();
             return o;
         },
         putCountdownOGP: function (c) {
@@ -57,7 +89,6 @@ var model = function (countdownHolder, head) {
                 outside = $('<li class="countdown"></li>').insertBefore($(countdownHolder).find("#" + this.countdowns[where].url).parent());
                 this.countdowns.splice(where, 0, c);
             }
-
             // Name of countdown
             var countdownName = $('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>').appendTo($(outside));
             
@@ -70,8 +101,8 @@ var model = function (countdownHolder, head) {
             // Social links
             var social = $('<span class="countdown-social">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) + '</span>').appendTo($(outside));
             // Countdown itself
-            var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
-            countdown(cd, c.eventDate, 24, 32, ledColors);
+            var cd = $("<span class=\"countdown-counter\" id=\"" + c.url + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
+            //countdown(cd, c.eventDate, 24, 32, ledColors);
             
             return $(outside);
 

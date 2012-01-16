@@ -11,10 +11,7 @@ var content = {
     scripts: [
         fs.readFileSync("./public/vendor/jquery-1.7.1.min.js"),
         fs.readFileSync("./public/vendor/underscore.js"),
-        fs.readFileSync('./public/timo/led.js'),
-        fs.readFileSync('./public/timo/timer.js'),
-        fs.readFileSync('./public/timo/countdown.js'),
-        fs.readFileSync('./public/timo/times.js'),
+        fs.readFileSync("./public/vendor/timo-0.0.1.js"),
         fs.readFileSync('./public/model.js'),
         fs.readFileSync('./public/controller.js')
     ]
@@ -24,7 +21,8 @@ var loadCompleted = function (window) {
     var $ = window.$;
     var model = window.model;
     var controller = window.controller;
-    var m = model($("#countdownlist"), $("head"));
+    var timo = window.timo;
+    var m = model($("#countdownlist"), $("head"), timo.noCounterType);
     var c = controller(m, "http://localhost:55555");
 
     console.log(c);

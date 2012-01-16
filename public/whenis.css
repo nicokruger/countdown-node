@@ -12,8 +12,18 @@ body {
 .timer {
     font-size: 32px;
     color: rgb(82, 139, 183);
+    display: inline-block;
 }
 
+.countdown-counter {
+    word-wrap: break-word;
+    overflow: visible;
+    font-size: 24px;
+    color: rgb(82, 139, 183);
+    cursor: pointer;
+    display: inline-block;
+
+}
 #countdownlist {
     list-style: none;
     margin: 0 auto;
