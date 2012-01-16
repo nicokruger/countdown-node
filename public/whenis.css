@@ -111,6 +111,7 @@ span.countdown-social {
 }
 span.social-link {
     display: none;
+    margin-bottom:3px;
 }
 span.countdown-name > a.visited {
     text-decoration: none;

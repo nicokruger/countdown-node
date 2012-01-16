@@ -88,11 +88,11 @@ var model = function (countdownHolder, head) {
         return {
             title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
             //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
-            ogtype: '<meta name="og:type" content="website" />',
-            url: '<meta name="og:url" content="http://www.whenis.co.za/' + c.url + '" />',
-            description: '<meta name="og:description" content="WhenIs - Release Dates For Games, Movies, Music and Everything Else',
+            ogtype: '<meta property="og:type" content="website" />',
+            url: '<meta property="og:url" content="http://www.whenis.co.za/' + c.url + '" />',
+            description: '<meta property="og:description" content="WhenIs - Release Dates For Games, Movies, Music and Everything Else" />',
             metaTags: function(){
-                return [ this.title, this.ogtype, this.url, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
+                return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
             }
         };
     },
