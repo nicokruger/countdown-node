@@ -19,6 +19,7 @@ body {
     margin: 0 auto;
     width: 800px;
     background-color: #ffffff;
+    padding: 0px;
     padding-top: 10px;
 }
 
@@ -32,8 +33,9 @@ body {
 
 li.countdown {
     padding: 0px;
-    margin-bottom: 3px;
-    border-bottom: 1px solid #000000;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid gray;
     width: 800px;
     overflow: auto;
 }
@@ -82,20 +84,17 @@ h1 {
 
 span.countdown {
     display: block;
-    float: left;
-    width: 400px;
+    float:left;
     margin: 0px;
     padding: 0px;
 }
 span.countdown-name {
     display: block;
-    width: 300px;
+    width: 400px;
     float: left;
-    margin: 0px;
     padding: 0px;
     font-size: large;
     font-weight: normal;
-    color: grey;
 }
 span.countdown-name > a {
     text-decoration: none;
@@ -103,6 +102,15 @@ span.countdown-name > a {
     font: normal normal normal 22px Arial, sans-serif;
     /*color: rgb(82, 139, 183);*/
     color: black;
+}
+span.countdown-social {
+    display: block;
+    width: 90px;
+    height: 100px;
+    float:left;
+}
+span.social-link {
+    display: none;
 }
 span.countdown-name > a.visited {
     text-decoration: none;
@@ -114,12 +122,11 @@ span.countdown-name > a.visited {
 
 span.countdown-tags {
     display: block;
-    float: left;
     width: 70px;
     margin: 0px;
     padding: 0px;
     font-size: small;
-    color: grey;
+    color: gray;
 }
 
 .button, .button:visited {

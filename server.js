@@ -37,7 +37,6 @@ var router = bee.route({
         file.serve(req,res);
     },
     "r`^/$`" : function (req,res) {
-        console.log("Month");
         client.client(req, res, putCountdowns(function (c) {
             return function (callback) {
                 c.nextMonth(callback);

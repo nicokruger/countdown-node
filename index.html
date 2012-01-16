@@ -66,18 +66,16 @@ xmlns:og="http://opengraphprotocol.org/schema/">
 <script>
 
 var initScript = function(src) {
-   var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
     po.src = src;
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 };
-<!-- initialise twitter stuff -->
   var initTwitter = function(){
     initScript('http://platform.twitter.com/widgets.js');
   };
 
-<!-- init +1 stuff -->
   var initPlusOne = function(){
-   initScript('https://apis.google.com/js/plusone.js');
+   initScript('http://apis.google.com/js/plusone.js');
  };
 
   var initSocial = function(){

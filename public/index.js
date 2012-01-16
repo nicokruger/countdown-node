@@ -1,7 +1,14 @@
 
 
 $(function () {
-  console.log("readyFunc");
+  
+  initSocial();
+  // add social mouse-over
+  $("li.countdown").live("mouseenter", function (eventObject) {
+    $(".social-link").css("display", "none");
+    $(eventObject.target).find(".social-link").css("display","inline-block");
+  });
+
   var m = model($("#countdownlist"));
   var c = controller(m, "http://" + window.location.hostname + ":55555");
   var action = actions(c);
@@ -24,6 +31,7 @@ $(function () {
           $("#searchbar").toggle();
       }
   });
+
 });
     
 var parseSearchData = function (text) {

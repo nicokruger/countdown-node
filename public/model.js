@@ -58,41 +58,42 @@ var model = function (countdownHolder, head) {
                 this.countdowns.splice(where, 0, c);
             }
 
-
-            $(outside).append('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>');
+            // Name of countdown
+            var countdownName = $('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>').appendTo($(outside));
+            
+            // Tags
+            $(countdownName).append('<span class="countdown-tags">' + c.tags + '</span>');
            
-            var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
-            $(outside).append('<span class="ui-li-count countdown-tags">' + c.tags + '</span>');
-        
-        $(outside).append('<a href="#" onclick="$(\'#social_group'+ c.url +'\').css({\'display\' : \'block\'}); initSocial();">share &gt;&gt; </a>' + 
-                  '<div id="social_group'+ c.url +'" style="display: none">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) +
-                  '</div>');
+            // Social links
+            var social = $('<span class="countdown-social">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) + '</span>').appendTo($(outside));
 
+            // Countdown itself
+            var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
             countdown(cd, c.eventDate, 24, 32, ledColors);
             
             return $(outside);
 
         },
     _facebook_link : function(url) {
-        return '<span><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
+        return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
         'scrolling="no" frameborder="0" style="border:none; width: 85px; height:20px"></iframe></span>';
     },
     _twitter_link : function(url) {
-        return '<span><a href="https://twitter.com/share" class="twitter-share-button" ' +
+        return '<span class="social-link"><a href="http://twitter.com/share" class="twitter-share-button" ' +
         'data-url="http://www.whenis.co.za/' + url + '">Tweet</a></span>';
     },
     _plusone_link : function(url) {
-        return '<span><g:plusone size="medium" annotation="inline" href="www.whenis.co.za/' + url + '"></g:plusone></span>';
+        return '<span class="social-link"><g:plusone size="medium" annotation="none" href="www.whenis.co.za/' + url + '"></g:plusone></span>';
     },
     _ogp : function(c) {
         return {
-        title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
-        //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
-        ogtype: '<meta name="og.type" content="website" />', 
-        url: '<meta name="og.url" content="http://www.whenis.co.za/' + c.url + '" />',
-        metaTags: function(){
-            return [ this.title, this.ogtype, this.url, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
-        }
+            title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
+            //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
+            ogtype: '<meta name="og.type" content="website" />',
+            url: '<meta name="og.url" content="http://www.whenis.co.za/' + c.url + '" />',
+            metaTags: function(){
+                return [ this.title, this.ogtype, this.url, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
+            }
         };
     },
         
