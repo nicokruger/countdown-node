@@ -43,6 +43,7 @@ var controller = function (model, server) {
         clear: function (e) {
             model.clear();
             $("#info").html("");
+            $("head > meta").remove(); // clear all meta tags
         },
         random: function (callback, failure) {
             countdownAction("/random", {}, "GET", callback, failure);
