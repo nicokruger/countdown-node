@@ -82,7 +82,7 @@ var model = function (countdownHolder, head) {
         'data-url="http://www.whenis.co.za/' + url + '">Tweet</a></span>';
     },
     _plusone_link : function(url) {
-        return '<span class="social-link"><g:plusone size="medium" annotation="none" href="www.whenis.co.za/' + url + '"></g:plusone></span>';
+        return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenis.co.za/' + url + '"></g:plusone></span>';
     },
     _ogp : function(c) {
         return {
