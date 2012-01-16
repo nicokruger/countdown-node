@@ -35,6 +35,9 @@ var controller = function (model, server) {
             },
             error: function (e) {
                 $("#info").html("An error occurred... Please try again." + JSON.stringify(e));
+                if (typeof(failure) !== "undefined") {
+                    failure(e);
+                }
             }
         });
     };
@@ -55,7 +58,6 @@ var controller = function (model, server) {
             countdownAction("/week", {}, "GET", callback, failure);
         },
         nextMonth: function (callback, failure) {
-            console.log("Month");
             countdownAction("/month", {}, "GET", callback, failure);
         },
         nextWeekend: function (callback, failure) {
@@ -64,8 +66,8 @@ var controller = function (model, server) {
         nextYear: function (callback, failure) {
             countdownAction("/year", {}, "GET", callback, failure);
         },
-        search: function(data) {
-            countdownAction("/countdowns", data, "GET");
+        search: function(data, callback, failure) {
+            countdownAction("/countdowns", data, "GET", callback, failure);
         },
         countdown: function (id, callback, failure) {
             countdownAction("?" + id, {}, "GET", callback, failure, true);

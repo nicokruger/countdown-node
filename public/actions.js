@@ -21,18 +21,6 @@ var actions = function (controller) {
 
     };
 
-    var timeSearch = function (endTime) {
-        var start = Date.parse("today").getTime();
-        var data = {
-            start: start,
-            end: endTime
-        };
-        countdownAction("/countdown/search", data, "POST", function () {
-            var format = "yyyy-MM-dd HH:mm";
-            $("#info").html("<h4>From " + (new Date(start)).toString(format) + " to " + (new Date(endTime)).toString(format));
-        });
-    };
-    
     return {
         clear: function (e) {
             controller.clear();
@@ -63,5 +51,5 @@ var actions = function (controller) {
 
                 
     };
-};
 
+};

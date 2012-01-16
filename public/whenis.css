@@ -130,6 +130,17 @@ span.countdown-tags {
     color: gray;
 }
 
+span.countdown-tag {
+    padding-right:5px;
+}
+span.countdown-tag > a, span.countdown-tag > a:visited {
+    text-decoration: none;
+    color: gray;
+}
+span.countdown-tag > a:hover {
+    color: lightgrey;
+}
+
 .button, .button:visited {
     text-decoration: none;
     

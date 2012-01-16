@@ -62,7 +62,10 @@ var model = function (countdownHolder, head) {
             var countdownName = $('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>').appendTo($(outside));
             
             // Tags
-            $(countdownName).append('<span class="countdown-tags">' + c.tags + '</span>');
+            var tags = $('<span class="countdown-tags"></span>').appendTo(countdownName);
+            _(c.tags).each(function (tag) {
+                tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '">' + tag + '</a></span>');
+            });
            
             // Social links
             var social = $('<span class="countdown-social">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) + '</span>').appendTo($(outside));

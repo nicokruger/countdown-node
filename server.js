@@ -84,9 +84,15 @@ var router = bee.route({
             };
         }));
     },
+    "r`/tags/(.+)`": function (req, res, matches) {
+        client.client(req, res, putCountdowns(function (c) {
+            return function (callback) {
+                c.search({"tags" : matches[0]}, callback);
+            };
+        }));
+    },
     "r`/(.+)`" : function (req, res, matches) {
         var id = matches[0];
-        console.log("ID: " + id);
         client.client(req, res, putCountdowns(function (c) {
             return function (callback, failure) {
                 c.countdown(id, callback, failure);

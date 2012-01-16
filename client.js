@@ -20,7 +20,7 @@ var content = {
     ]
 };
 
-var completed = function (window) {
+var loadCompleted = function (window) {
     var $ = window.$;
     var model = window.model;
     var controller = window.controller;
@@ -36,7 +36,7 @@ var completed = function (window) {
     exports.window = window;
 };
 
-var load = function () {
+var load = function (completed) {
     process.nextTick(function () {
 
         var client = jsdom.jsdom(content.html, null, {
@@ -80,7 +80,9 @@ var load = function () {
             w.document.documentElement.removeChild(script);
         });
     });
-}();
+};
+
+load(loadCompleted);
 
 exports.client = function (req, resp, makeClient) {
     makeClient(resp, this.window);
