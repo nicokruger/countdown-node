@@ -37,6 +37,7 @@ var controller = function (model, server) {
     return {
         clear: function (e) {
             model.clear();
+            $("#info").html("");
         },
         random: function (callback, failure) {
             countdownAction("/random", {}, "GET", callback, failure);
