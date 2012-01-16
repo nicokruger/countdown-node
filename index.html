@@ -65,24 +65,27 @@ xmlns:og="http://opengraphprotocol.org/schema/">
 
 <script>
 
-var initScript = function(src) {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = src;
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-};
-  var initTwitter = function(){
-    initScript('http://platform.twitter.com/widgets.js');
-  };
+    $(function () {
+        var initScript = function(src) {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = src;
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        };
+        var initTwitter = function(){
+            initScript('http://platform.twitter.com/widgets.js');
+        };
 
-  var initPlusOne = function(){
-   initScript('http://apis.google.com/js/plusone.js');
- };
+        var initPlusOne = function(){
+            initScript('http://apis.google.com/js/plusone.js');
+        };
 
-  var initSocial = function(){
-    initTwitter();
-    initPlusOne();
-  };
-  
+        var initSocial = function(){
+            initTwitter();
+            initPlusOne();
+        };
+
+        initSocial();
+    });
 </script>
 
 </div>

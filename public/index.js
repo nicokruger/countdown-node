@@ -2,9 +2,14 @@
 
 $(function () {
   
-  initSocial();
   // add social mouse-over
   $("li.countdown").live("mouseenter", function (eventObject) {
+    if (typeof(gapi) !== "undefined") {
+      gapi.plusone.go();
+    }
+    if (typeof(twttr) !== "undefined") {
+      twttr.widgets.load();
+    }
     $(".social-link").css("display", "none");
     $(eventObject.target).find(".social-link").css("display","inline-block");
   });

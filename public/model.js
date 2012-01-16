@@ -66,7 +66,6 @@ var model = function (countdownHolder, head) {
            
             // Social links
             var social = $('<span class="countdown-social">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) + '</span>').appendTo($(outside));
-
             // Countdown itself
             var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
             countdown(cd, c.eventDate, 24, 32, ledColors);
