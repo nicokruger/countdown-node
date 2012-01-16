@@ -20,12 +20,12 @@ var controller = function (model, server) {
                     }
                 }
                 if (o.hasOwnProperty("countdowns")) {
-		    if(ogp === undefined) {
-			model.putCountdowns(o.countdowns);
-		    }
-		    else {
-			model.putCountdownOGP(o.countdowns[0]);
-		    }
+                    if(ogp === undefined) {
+                        model.putCountdowns(o.countdowns);
+                    }
+                    else {
+                        model.putCountdownOGP(o.countdowns[0]);
+                    }
                 } else {
                     model.putCountdown(o);
                 }
