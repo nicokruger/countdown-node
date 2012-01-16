@@ -1,5 +1,8 @@
+
 var controller = function (model, server) {
-    
+    console.log("creating provider");
+    //var countdownProvider = new CountdownProvider("localhost", 27017);
+    console.log("Provider created");
     server = server === undefined ? "" : server;
 
     var countdownAction = function (url, data, method, success, failure, ogp) {
@@ -38,6 +41,18 @@ var controller = function (model, server) {
             }
         });
     };
+
+    var dbCallback = function(errors, data) {
+	if(errors){
+	    $("#info").html("An error occurred... Please try again." + JSON.stringify(errors));
+	}
+	else if(data.hasOwnProperty("countdowns")) {
+	    model.putCountdowns(data.countdowns);
+	}
+	else {
+	    model.putCountdown(data);
+	}
+    };
     
     return {
         clear: function (e) {
@@ -50,7 +65,11 @@ var controller = function (model, server) {
             countdownAction("/day", {}, "GET", callback, failure);
         },
         nextWeek: function (callback, failure) {
-            countdownAction("/week", {}, "GET", callback, failure);
+	     console.log("Week");
+	     var data =  {'countdowns' : [{"name": "the countdown", "url": "urlo", "tags": ["appel"], "eventDate": "3000"}]};
+	     dbCallback(null, data);
+	     callback(data);
+	    //countdownAction("/week", {}, "GET", callback, failure);
         },
         nextMonth: function (callback, failure) {
             console.log("Month");

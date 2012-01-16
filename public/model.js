@@ -31,6 +31,7 @@ var model = function (countdownHolder, head) {
             $(countdownHolder).html(""); // clear
             var that = this;
             _(countdowns).each(function (countdown) {
+		    console.log("putting countdown ..." + countdown.name);
                 that._putCountdown(countdown);
             });
         },
@@ -48,8 +49,10 @@ var model = function (countdownHolder, head) {
         
         //ads a countdown, does not refresh the view
         _putCountdown: function (c) {
-            var where = this.find(c);
-            var outside;
+            var where = this.find(c),
+	    outside,
+	    c_id = c._id.toString();
+
             if (where === undefined) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
                 this.countdowns.push(c);
@@ -59,17 +62,19 @@ var model = function (countdownHolder, head) {
             }
 
 
-            $(outside).append('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>');
-           
-            var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
+            $(outside).append('<span class="countdown-name"><a href="' + c_id + '">' + c.name + '</a></span>');
+            
+
+            var cd = $("<span class=\"countdown\" id=\"" + c_id + "\"></span>").appendTo($(outside));
+
             $(outside).append('<span class="ui-li-count countdown-tags">' + c.tags + '</span>');
 	    
-	    $(outside).append('<a href="#" onclick="$(\'#social_group'+ c.url +'\').css({\'display\' : \'block\'}); initSocial();">share &gt;&gt; </a>' + 
-			      '<div id="social_group'+ c.url +'" style="display: none">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) +
-			      '</div>');
-
-            countdown(cd, c.eventDate, 24, 32, ledColors);
-            
+	    $(outside).append('<a href="#" onclick="$(\'#social_group'+ c_id +'\').css({\'display\' : \'block\'}); initSocial();">share &gt;&gt; </a>' + 
+	    	      '<div id="social_group'+ c_id +'" style="display: none">' + this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id) +
+	    	      '</div>');
+	    
+	    countdown(cd, c.eventDate.getTime(), 24, 32, ledColors);
+            console.log('done putting ' + c.name);
             return $(outside);
 
         },
@@ -89,7 +94,7 @@ var model = function (countdownHolder, head) {
 		title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
 		//this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
 		ogtype: '<meta name="og.type" content="website" />', 
-		url: '<meta name="og.url" content="http://www.whenis.co.za/' + c.url + '" />',
+		url: '<meta name="og.url" content="http://www.whenis.co.za/' + c._id.toString() + '" />',
 		metaTags: function(){
 		    return [ this.title, this.ogtype, this.url, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
 		}
