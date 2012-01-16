@@ -1,10 +1,13 @@
-<!doctype html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html 
+xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:og="http://opengraphprotocol.org/schema/">
 
 <head>
     <title>When Is - Release dates for games, movies, music and sports</title>
     <meta charset=utf-8 /> 
     
+
     <!-- vendor scripts -->
     <script src="public/vendor/jquery-1.7.1.min.js"></script>
     <script src="public/vendor/underscore.js"></script>
@@ -59,6 +62,30 @@
     <div>
 </div>
 
+
+<script>
+
+var initScript = function(src) {
+   var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = src;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+};
+<!-- initialise twitter stuff -->
+  var initTwitter = function(){
+    initScript('http://platform.twitter.com/widgets.js');
+  };
+
+<!-- init +1 stuff -->
+  var initPlusOne = function(){
+   initScript('https://apis.google.com/js/plusone.js');
+ };
+
+  var initSocial = function(){
+    initTwitter();
+    initPlusOne();
+  };
+  
+</script>
 
 </div>
 

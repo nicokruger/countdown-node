@@ -1,7 +1,7 @@
 /* Modules */
 var jsdom = require("jsdom");
 var fs = require("fs");
-var sys = require("sys");
+var sys = require("util");
 var X = require("./XMLHttpRequest.js");
 var XMLHttpRequest = X.XMLHttpRequest;
 //global.XMLHttpRequest = X.XMLHttpRequest;
@@ -24,7 +24,7 @@ var completed = function (window) {
 	var $ = window.$;
 	var model = window.model;
 	var controller = window.controller;
-	var m = model($("#countdownlist"));
+	var m = model($("#countdownlist"), $("head"));
 	var c = controller(m, "http://localhost:55555");
 
 	console.log(c);

@@ -99,7 +99,8 @@ var router = bee.route({
 		file.serveFile("/404.html", 404, {}, req, res);
 	},
 
-	"`503`" : function (req,res) {
+	"`503`" : function (req,res,err) {
+	        console.error(err.stack);
 		file.serveFile("/503.html", 503, {}, req, res);
 	}
 });
