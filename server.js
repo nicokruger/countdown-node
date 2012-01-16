@@ -39,7 +39,7 @@ var router = bee.route({
     "r`^/$`" : function (req,res) {
         client.client(req, res, putCountdowns(function (c) {
             return function (callback) {
-                c.nextMonth(callback);
+                c.nextDay(callback);
             };
         }));
     },
