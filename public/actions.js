@@ -5,10 +5,11 @@ var actions = function (controller) {
         if (e.state && e.state.url) {
             controller.countdownAction(e.state.url, e.state.data, e.state.method);
         }
-    };
+    };*/
     
     var historyAction = function (e, retrieveData, url, data, method) {
-        if (!(window.history && history.pushState)) {
+        return;
+        /*if (!(window.history && history.pushState)) {
             return;
         }
         
@@ -16,10 +17,10 @@ var actions = function (controller) {
         
         retrieveData(function () {
             history.pushState({"url": url, "data" : data, "method" : method}, "", url);
-        });
+        });*/
 
-    };*/
-    
+    };
+
     var timeSearch = function (endTime) {
         var start = Date.parse("today").getTime();
         var data = {
