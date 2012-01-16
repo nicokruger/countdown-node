@@ -1,7 +1,7 @@
 var actions = function (controller) {
     
     // TODO: This is broken atm
-    window.onpopstate = function (e) {
+    /*window.onpopstate = function (e) {
         if (e.state && e.state.url) {
             controller.countdownAction(e.state.url, e.state.data, e.state.method);
         }
@@ -18,7 +18,7 @@ var actions = function (controller) {
             history.pushState({"url": url, "data" : data, "method" : method}, "", url);
         });
 
-    };
+    };*/
     
     var timeSearch = function (endTime) {
         var start = Date.parse("today").getTime();
