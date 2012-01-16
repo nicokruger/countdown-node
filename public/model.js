@@ -31,6 +31,7 @@ var model = function (countdownHolder, head) {
             $(countdownHolder).html(""); // clear
             var that = this;
             _(countdowns).each(function (countdown) {
+		    console.log("putting countdown ..." + countdown.name);
                 that._putCountdown(countdown);
             });
         },
@@ -48,8 +49,10 @@ var model = function (countdownHolder, head) {
         
         //ads a countdown, does not refresh the view
         _putCountdown: function (c) {
-            var where = this.find(c);
-            var outside;
+            var where = this.find(c),
+	    outside,
+	    c_id = c._id.toString();
+
             if (where === undefined) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
                 this.countdowns.push(c);
