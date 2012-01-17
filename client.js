@@ -11,7 +11,7 @@ var content = {
     scripts: [
         fs.readFileSync("./public/vendor/jquery-1.7.1.min.js"),
         fs.readFileSync("./public/vendor/underscore.js"),
-        fs.readFileSync("./public/vendor/timo-0.0.1.js"),
+        fs.readFileSync("./public/vendor/timo-0.0.2.js"),
         fs.readFileSync('./public/model.js'),
         fs.readFileSync('./public/controller.js')
     ]
