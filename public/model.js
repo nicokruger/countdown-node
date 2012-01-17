@@ -10,7 +10,7 @@ var ledTheme = {
 var emptyHtml = "<h1>Nothing to see here...</h1>";
 var formatDate = function (t) {
     var d = new Date(t);
-    return d.getFullYear() + "-" + timo.pad(d.getMonth()+1,2) + "-" + timo.pad(d.getDay(),2) + " " + timo.pad(d.getHours(),2) + ":" + timo.pad(d.getMinutes(),2) + " UTC";
+    return d.getFullYear() + "-" + timo.pad(d.getMonth()+1,2) + "-" + timo.pad(d.getDate(),2) + " " + timo.pad(d.getHours(),2) + ":" + timo.pad(d.getMinutes(),2) + " UTC";
 };
 
 var timoTypes = [timo.normalCounterType, timo.noCounterType, timo.ledCounterType(ledTheme)];
