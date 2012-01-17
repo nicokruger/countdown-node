@@ -3,11 +3,12 @@ var jsdom = require("jsdom");
 var fs = require("fs");
 var sys = require("util");
 var X = require("./XMLHttpRequest.js");
+var underscore = require("./public/vendor/underscore.js");
+
 var XMLHttpRequest = X.XMLHttpRequest;
 //global.XMLHttpRequest = X.XMLHttpRequest;
 
 var content = {
-    html: fs.readFileSync("./index.html").toString(),
     scripts: [
         fs.readFileSync("./public/vendor/jquery-1.7.1.min.js"),
         fs.readFileSync("./public/vendor/underscore.js"),
@@ -25,19 +26,17 @@ var loadCompleted = function (window) {
     var m = model($("#countdownlist"), $("head"), timo.noCounterType);
     var c = controller(m, "http://localhost:55555");
 
-    console.log(c);
-
     window.m = m;
     window.c = c;
     window.console = console;
 
-    exports.window = window;
+    return window;
 };
 
-var load = function (completed) {
+var load = function (completed, html) {
     process.nextTick(function () {
 
-        var client = jsdom.jsdom(content.html, null, {
+        var client = jsdom.jsdom(html, null, {
             // set features to false to parse initial html
             features: {
                 'FetchExternalResources':false,
@@ -80,8 +79,22 @@ var load = function (completed) {
     });
 };
 
-load(loadCompleted);
 
-exports.client = function (req, resp, makeClient) {
-    makeClient(resp, this.window);
+// Create the normal DOM - for viewing countdowns
+load(function (window) {
+    exports.countdownClientWindow = loadCompleted(window);
+}, underscore.template(fs.readFileSync("./index.html").toString(), {"content" : fs.readFileSync("./countdowns.html").toString()}));
+
+// Create the DOM for the addpage
+load(function (window) {
+    exports.addWindow = loadCompleted(window);
+}, underscore.template(fs.readFileSync("./index.html").toString(), {"content" : fs.readFileSync("./add.html").toString()}));
+
+
+exports.countdowns = function (req, resp, sendClient) {
+    sendClient(resp, this.countdownClientWindow);
+};
+
+exports.add = function (req, resp, sendClient) {
+    sendClient(resp, this.addWindow);
 };

@@ -1,5 +1,5 @@
 body {
-    background: #000000;
+    background: #507269;
 }
 
 .seperator {
@@ -36,6 +36,7 @@ body {
 #buttonbar {
     border-bottom: 1px solid #efefef;
     border-top: 1px solid #efefef;
+    background-color: rgb(248, 248, 251);
     margin: 0 auto;
     width: 500px;
     padding: 15px;
@@ -75,11 +76,8 @@ h1 {
     font-size: 24px;
 }
 
-#mainview {
-    width: 850px;
-    margin: 0 auto;
+.mainview {
     background-color: #ffffff;
-    padding-bottom: 20px;
 }
 
 .footnote {
@@ -176,4 +174,14 @@ a.visited {
 
 .social_link_group {
     float: left;
+}
+
+.addcounter {
+    margin-left: 100px; 
+    margin-top: 20px;
+}
+
+input {
+    line-height: 24px;
+    height: 24px;
 }

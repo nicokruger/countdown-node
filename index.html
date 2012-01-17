@@ -19,39 +19,34 @@ xmlns:og="http://opengraphprotocol.org/schema/">
     <script src="/public/actions.js"></script>
     <script src="/public/controller.js"></script>
 
-    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="stylesheet" href="/public/vendor/bootstrap.min.css" />
     <link rel="stylesheet" href="/public/whenis.css" />
 </head>
 
 <body>
 
-<div id="mainview">
+<div class="container mainview">
     <div id="headerbar">
         <div>
-            <div class="header">When Is? (beta)</div>
+            <div class="header"><h1>When Is? (beta)</h1></div>
             <span class="header" style="font-weight: normal; font-size: small">Release dates for games, movies, music and everything in between</span>
         </div>
         <div id="buttonbar">
-            <a class="button" href="/add">+</a>
+            <a class="btn" href="/add">+</a>
             <input id="searchbox" placeholder="eg. starcraft, #games etc." type="text" name="name" />
-            <a class="button" href="/random" id="random">Random</a>
-            <a class="button" href="/day" id="fetchDay">Day</a>
-            <a class="button" href="/week" id="fetchWeek">Week</a>
+            <a class="btn" href="/day" id="fetchDay">Day</a>
+            <a class="btn" href="/week" id="fetchWeek">Week</a>
+            <a class="btn" href="/random" id="random">Random</a>
         </div>
     </div>
 
-    <div class="main-item">
-        <ul id="countdownlist">
-        </ul>
-        
-        <div id="info">
-        </div>
+    <div class="content">
+        <%= content %>
     </div>
-
 
     <div class="footnote">When Is aims to be a general-purpose service for use in tracking important dates, such as game release dates, movie release dates, television
     schedules, album releases, etc. It is community driven and welcomes any and all contributions.
-    <div>
+    </div>
 </div>
 
 
