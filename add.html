@@ -9,7 +9,6 @@
     <!-- vendor scripts -->
     <script src="public/vendor/jquery-1.7.1.min.js"></script>
     <script src="public/vendor/underscore.js"></script>
-    <script src="public/vendor/date.js"></script>
     <script src="public/vendor/timo-0.0.1.js"></script>
 
     <!-- main script -->
@@ -31,7 +30,7 @@
         e.preventDefault();
         var ed;
         try {
-            ed = Date.parseExact($("#countdownDatetime").val(), "yyyy-MM-ddTHH:mm");
+            ed = moment($("#countdownDatetime").val(), "YYYY-MM-DDTHH:mm");
         } catch (err) {
             alert("cannot parse date: " + err);
             return;
@@ -44,7 +43,7 @@
         var data = {
             name: $("#countdownName").val(),
             tags: $("#countdownTags").val(),
-            eventDate:  ed.getTime()
+            eventDate:  ed.native().getTime()
         };
 
         $.ajax({
