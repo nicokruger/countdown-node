@@ -52,12 +52,16 @@ span.social-link {
 }
 
 
+span.countdown-name {
+    display:block;
+}
 span.countdown-name > a {
     text-decoration: none;
     display: inline-block;
     font: normal normal normal 22px Arial, sans-serif;
     /*color: rgb(82, 139, 183);*/
     color: black;
+    display: block;
 }
 
 span.countdown-name > a.visited {

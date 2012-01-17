@@ -102,20 +102,15 @@ var router = bee.route({
     },
     "r`/(.+)`" : function (req, res, matches) {
         var id = matches[0];
-        console.log("Req: " + req.url);
         // determine which client to use - normal or headless by looking at the headless query parameter
         var query = url.parse(req.url,true).query;
-        console.log(query);
-        console.log(query["headless"]);
-        if (query === undefined || query["headless"] !== "true") {
-            console.log("Normal");
+        if (query === undefined || query["embedded"] !== "true") {
             client.countdowns(req, res, putCountdowns(function (c) {
                 return function (callback, failure) {
                     c.countdown(id, callback, failure);
                 };
             }));
         } else {
-            console.log("Headless");
             client.headless(req, res, putCountdowns(function (c) {
                 return function (callback, failure) {
                     c.countdown(id, callback, failure);
