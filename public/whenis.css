@@ -22,7 +22,9 @@ body {
     color: rgb(82, 139, 183);
     cursor: pointer;
     display: inline-block;
-
+    -moz-border-radius: 15px; 
+    -webkit-border-radius: 15px; 
+    border-radius: 15px;    
 }
 #countdownlist {
     list-style: none;
@@ -185,3 +187,4 @@ input {
     line-height: 24px;
     height: 24px;
 }
+

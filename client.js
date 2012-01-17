@@ -83,13 +83,35 @@ var load = function (completed, html) {
 // Create the normal DOM - for viewing countdowns
 load(function (window) {
     exports.countdownClientWindow = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(), {"content" : fs.readFileSync("./countdowns.html").toString()}));
+}, underscore.template(fs.readFileSync("./index.html").toString(),
+    {   "header" : fs.readFileSync("./header.html").toString(),
+        "content" : fs.readFileSync("./countdowns.html").toString(),
+        "footer" : fs.readFileSync("./footer.html").toString(),
+        "css" : "/public/whenis.css"
+    }
+));
 
 // Create the DOM for the addpage
 load(function (window) {
     exports.addWindow = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(), {"content" : fs.readFileSync("./add.html").toString()}));
+}, underscore.template(fs.readFileSync("./index.html").toString(),
+    {   "header" : fs.readFileSync("./header.html").toString(),
+        "content" : fs.readFileSync("./add.html").toString(),
+        "footer" : fs.readFileSync("./footer.html").toString(),
+        "css" : "/public/whenis.css"
+    }
+));
 
+// Create the headless DOM
+load(function (window) {
+    exports.headlessWindow = loadCompleted(window);
+}, underscore.template(fs.readFileSync("./index.html").toString(),
+    {   "header" : "",
+        "content" : fs.readFileSync("./countdowns.html").toString(),
+        "footer" : '<footer>Brought to you by <a href="http://www.whenis.co.za">When Is</a></footer>',
+        "css" : "/public/whenis-headless.css"
+    }
+));
 
 exports.countdowns = function (req, resp, sendClient) {
     sendClient(resp, this.countdownClientWindow);
@@ -97,4 +119,8 @@ exports.countdowns = function (req, resp, sendClient) {
 
 exports.add = function (req, resp, sendClient) {
     sendClient(resp, this.addWindow);
+};
+
+exports.headless = function (req, resp, sendClient) {
+  sendClient(resp, this.headlessWindow);
 };

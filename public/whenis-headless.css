@@ -1,0 +1,85 @@
+body {
+    background: #507269;
+    width: 500px;
+}
+
+.container {
+    background: #ffffff;
+    width: 500px;
+    padding-left:15px;
+    padding-right:15px;
+    padding-top:5px;
+    padding-bottom:17px;
+    border-radius: 4px;    
+}
+
+span.countdown-social {
+    display: inline;
+    position: absolute;
+    left:16px;
+    bottom:16px;
+}
+span.social-link {
+}
+
+.seperator {
+    font-size: 16px;
+    margin-left:5px;
+    margin-right:5px;
+    color: rgb(0, 0, 0);
+}
+.timer {
+    font-size: 32px;
+    color: rgb(82, 139, 183);
+    display: inline-block;
+}
+
+.countdown-counter {
+    word-wrap: break-word;
+    overflow: visible;
+    font-size: 24px;
+    color: rgb(82, 139, 183);
+    cursor: pointer;
+    display: inline-block;
+    padding-top:10px;
+
+}
+#countdownlist {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0px;
+    padding-top: 10px;
+}
+
+
+span.countdown-name > a {
+    text-decoration: none;
+    display: inline-block;
+    font: normal normal normal 22px Arial, sans-serif;
+    /*color: rgb(82, 139, 183);*/
+    color: black;
+}
+
+span.countdown-name > a.visited {
+    text-decoration: none;
+    display: inline-block;
+    font: normal normal normal 22px Arial, sans-serif;
+    /*color: rgb(82, 139, 183);*/
+    color: black;
+}
+
+span.countdown-tags {
+    display: none;
+}
+
+span.countdown-tag > a, span.countdown-tag > a:visited {
+    text-decoration: none;
+    color: gray;
+}
+span.countdown-tag > a:hover {
+    color: lightgrey;
+}
+footer {
+    text-align: right;
+    font-size: 12px;
+}
