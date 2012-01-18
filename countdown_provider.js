@@ -61,7 +61,6 @@ CountdownProvider.prototype.random = function(callback) {
      });
 };
 
-//untested - need to add tags as well
 CountdownProvider.prototype.search = function(params, callback) {
     this.mongoQuery(function (collection) {
 	    var nameRegex = '.*' + params.name.split(' ').join('.*') + '.*';
@@ -73,9 +72,24 @@ CountdownProvider.prototype.search = function(params, callback) {
 	    if(params.end !== undefined){
 		query['eventDate']['$lt'] = params.end;
 	    }
-	    console.log( JSON.stringify(query));
 	    return collection.find(query);
 	}, callback);
+};
+
+CountdownProvider.prototype.upsert = function(countdown, callback) {
+   this.collection(function (error, coll) {
+	   coll.update({name : countdown.name}, countdown, {upsert: true}, function(error, docs) {
+		   callback(docs);
+	    });
+    }); 
+};
+
+CountdownProvider.prototype.insert = function(countdown, callback) {
+    this.collection(function (error, coll) {
+	    coll.insert(countdown, function(error, docs) {
+		    callback(docs);
+	    });
+    });
 };
 	    
 

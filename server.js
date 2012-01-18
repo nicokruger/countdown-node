@@ -40,7 +40,21 @@ var putMongoCountdowns = function (data, resp, window){
     resp.writeHead(200, {"Content-type":"text/html"});
     resp.end(window.document.innerHTML);
 };
-	
+
+var parseTags = function(tagsString) {
+    if(tagsString !== undefined) {
+	return tagsString.split(',');
+    }
+    else return [];
+};
+
+var countdownFromReq = function(req){
+    var countdown = {};
+	countdown.tags = parseTags(req.query.tags);
+	countdown.name = req.query.name === undefined ? 'no-name' : req.query.name;
+	countdown.eventDate = new Date(req.query.eventDate === undefined ? 0 : req.query.eventDate);
+    return countdown;
+}
 
 app.configure( function(req,res) {
 	app.use('/public', express.static('./public'));
@@ -100,8 +114,8 @@ app.get("/countdowns", function (req, res) {
         
 	var params = {};
 	params.name = req.query.name === undefined ? '' : req.query.name;
-	var tempTags = req.query.tags;
-	params.tags = tempTags === undefined ? [] : tempTags.split(',');
+    
+	params.tags = parseTags(req.query.tags);
 	params.start = new Date(req.query.start === undefined ? 0 : req.query.start);
 	params.end = req.query.end === undefined ? undefined : new Date(req.query.end);
 
@@ -114,6 +128,18 @@ app.get("/countdowns", function (req, res) {
 	    //not handled atm
 	}
     });
+app.post('/upsert', function (req, res) {
+	var countdown = countdownFromReq(req);
+	countdownProvider.upsert(countdown, function(data) {
+		res.json(data);
+	    });
+    }),
+app.post('/insert', function (req, res) {
+	var countdown = countdownFromReq(req);
+	countdownProvider.insert(countdown, function(data) {
+		res.json(data);
+	    });
+   }),
 app.get('/:id', function(req, res) {
 	client.client(req, res, function(r,w) {
 		countdownProvider.retrieveById(req.params.id, function(data){
