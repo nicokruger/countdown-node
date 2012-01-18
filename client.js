@@ -25,7 +25,7 @@ var completed = function (window) {
     var model = window.model;
     var controller = window.controller;
     var m = model($("#countdownlist"), $("head"));
-    var c = controller(m, "http://localhost:55555");
+    var c = controller(m, "http://localhost:8080");
 
     console.log(c);
 

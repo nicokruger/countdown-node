@@ -65,6 +65,7 @@ var controller = function (model, server) {
             countdownAction("/year", {}, "GET", callback, failure);
         },
         search: function(data) {
+	    console.log("Search in controller");
             countdownAction("/countdowns", data, "GET");
         },
         countdown: function (id, callback, failure) {

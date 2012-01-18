@@ -37,85 +37,93 @@ var putMongoCountdowns = function (data, resp, window){
     resp.writeHead(200, {"Content-type":"text/html"});
     resp.end(window.document.innerHTML);
 };
+
+var putJsonCountdowns = function(data, resp){
+    resp.writeHead(200, {"Content-type" : "application/json"});
+    resp.end(data);
+};
 	
 
 // Router
 var router = bee.route({
-    "r`^/public.*`" : function(req,res) {
-        file.serve(req,res);
-    },
-    "r`^/$`" : function (req,res) {
-        client.client(req, res, putCountdowns(function (c) {
-            return function (callback) {
-                c.nextWeek(callback);
-            };
-        }));
-    },
+	"r`^/public.*`" : function(req,res) {
+	    file.serve(req,res);
+	},
+	"r`^/$`" : function (req,res) {
+	    client.client(req, res, putCountdowns(function (c) {
+			return function (callback) {
+			    c.nextWeek(callback);
+			};
+		    }));
+	},
 
-    "/add" : function (req, res) {
-        res.writeHead(200, {"Content-type":"text/html"});
-        res.end(addHtml);
-    },
+	"/add" : function (req, res) {
+	    res.writeHead(200, {"Content-type":"text/html"});
+	    res.end(addHtml);
+	},
 	"/day" : function (req,res) {
-	     client.client(req, res, function(r,w) {
+	    client.client(req, res, function(r,w) {
 		    countdownProvider.day(function(data){
 			    putMongoCountdowns(data, r, w);
-		    });
-		 });
+			});
+		});
 	},
 	"/week" : function (req,res) {
-	        client.client(req, res, function(r,w) {
+	    client.client(req, res, function(r,w) {
 		    countdownProvider.week(function(data){
 			    putMongoCountdowns(data, r, w);
-		    });
-		 });
+			});
+		});
 	},
 	"/month" : function (req,res) {
 	    client.client(req, res, function(r,w) {
 		    countdownProvider.month(function(data){
 			    putMongoCountdowns(data, r, w);
 			});
-		 });
+		});
 
 	},
 	"/year" : function (req,res) {
 	    client.client(req, res, function (r, w) {
 		    countdownProvider.year ( function(data) {
 			    putMongoCountdowns(data, r, w);
-		    });
+			});
 		});
 	},
 	"/random" : function (req,res) {
-	     client.client(req, res, function (r, w) {
+	    client.client(req, res, function (r, w) {
 		    countdownProvider.random ( function(data) {
 			    putMongoCountdowns(data, r, w);
-		    });
+			});
 		});
 	},
-        "/search" : function (req, res) {
+        "/countdowns" : function (req, res) {
+	    console.log(req.url);
 	    if(req.headers['Content-Type'] === 'application/json') {
-		
+		countdownProvider.random(stuff, function(data){
+			putJsonCountdowns(data, resp);
+	        });
 	    }
-        },
+	},
 	"r`/(.+)`" : function (req, res, matches) {
-		var id = matches[0];
+	    var id = matches[0];
 
-		client.client(req, res, function(r,w) {
-			countdownProvider.retrieveById(id, function(data){
-				putMongoCountdowns(data, r, w);
-			    });
+	    client.client(req, res, function(r,w) {
+		    countdownProvider.retrieveById(id, function(data){
+			    putMongoCountdowns(data, r, w);
+			});
 		});
 	},
 
-    "`404`" : function (req,res) {
-        file.serveFile("/404.html", 404, {}, req, res);
-    },
+	"`404`" : function (req,res) {
+	    file.serveFile("/404.html", 404, {}, req, res);
+	},
 
 	"`503`" : function (req,res,err) {
-		console.log("matched 503 because:");
-		console.error(err.stack);
-		file.serveFile("/503.html", 503, {}, req, res);
+	    console.log("matched 503 because:");
+	    console.error(err.stack);
+	    file.serveFile("/503.html", 503, {}, req, res);
 	}
-});
+    });
 http.createServer(router).listen(8080, "127.0.0.1");
 
