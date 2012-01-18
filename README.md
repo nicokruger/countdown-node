@@ -15,7 +15,8 @@ So basically, you need to install node.js and npm using your distro package mana
 
      npm install jsdom
      npm install node-static
-     npm install beeline
+     npm install mongodb --mongodb:native
+     npm install express
 
 Then run with the following command:
 

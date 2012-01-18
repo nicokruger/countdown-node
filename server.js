@@ -52,7 +52,7 @@ var countdownFromReq = function(req){
     var countdown = {};
 	countdown.tags = parseTags(req.query.tags);
 	countdown.name = req.query.name === undefined ? 'no-name' : req.query.name;
-	countdown.eventDate = new Date(req.query.eventDate === undefined ? 0 : req.query.eventDate);
+	countdown.eventDate = new Date(req.query.eventDate === undefined ? 0 : parseInt(req.query.eventDate, 10));
     return countdown;
 }
 
@@ -116,8 +116,8 @@ app.get("/countdowns", function (req, res) {
 	params.name = req.query.name === undefined ? '' : req.query.name;
     
 	params.tags = parseTags(req.query.tags);
-	params.start = new Date(req.query.start === undefined ? 0 : req.query.start);
-	params.end = req.query.end === undefined ? undefined : new Date(req.query.end);
+	params.start = new Date(req.query.start === undefined ? 0 : parseInt(req.query.start, 10));
+	params.end = req.query.end === undefined ? undefined : new Date( parseInt(req.query.end, 10));
 
 	if(req.is('application/json')){
 	    countdownProvider.search(params, function(data){
@@ -130,6 +130,7 @@ app.get("/countdowns", function (req, res) {
     });
 app.post('/upsert', function (req, res) {
 	var countdown = countdownFromReq(req);
+        console.log('upserting '+ countdown.eventDate.getTime());
 	countdownProvider.upsert(countdown, function(data) {
 		res.json(data);
 	    });
@@ -144,7 +145,10 @@ app.get('/:id', function(req, res) {
 	client.client(req, res, function(r,w) {
 		countdownProvider.retrieveById(req.params.id, function(data){
 			putMongoCountdowns(data, r, w);
-		    });
+		    }, function(error){
+                        console.log("For the url " + req.url +" :" );  //stupid favicon.ico  - why?
+                        console.error(error);
+                    });
 	    });
     });
 

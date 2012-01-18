@@ -21,10 +21,16 @@ CountdownProvider.prototype.retrieveAll = function (callback) {
 	}, callback);
 };
 
-CountdownProvider.prototype.retrieveById = function(idString, callback){
-    this.mongoQuery(function (collection) {
-	    return collection.find({'_id': new ObjectID(idString)});
-	}, callback);
+CountdownProvider.prototype.retrieveById = function(idString, callback, failure){
+    try{
+        this.mongoQuery(function (collection) {
+            var objId = new ObjectID(idString);
+            return collection.find({'_id': new ObjectID(idString)});
+        }, callback);
+    }
+    catch(err) {
+        failure(err);
+    }
 };
 
 CountdownProvider.prototype.day = function (callback) {
