@@ -19,7 +19,6 @@ $(function () {
   var action = actions(c);
 
   $("#random").click(action.random);
-
   $("#fetchDay").click(action.nextDay);
   $("#fetchWeek").click(action.nextWeek);
   $("#fetchMonth").click(action.nextMonth);

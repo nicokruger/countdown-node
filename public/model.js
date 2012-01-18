@@ -7,7 +7,7 @@ var ledTheme = {
     height: 32
 };
 
-var emptyHtml = "<h1>Nothing to see here...</h1>";
+var emptyHtml = "<div class=\"no-counters\">Oops! There are no counters for your selection. Try a different search or time range.</div>";
 var formatDate = function (t) {
     var d = new Date(t);
     return d.getFullYear() + "-" + timo.pad(d.getMonth()+1,2) + "-" + timo.pad(d.getDate(),2) + " " + timo.pad(d.getHours(),2) + ":" + timo.pad(d.getMinutes(),2) + " UTC";
