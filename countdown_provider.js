@@ -62,17 +62,18 @@ CountdownProvider.prototype.random = function(callback) {
 };
 
 //untested - need to add tags as well
-CountdownProvider.prototype.search = function(name, tags, start, end) {
+CountdownProvider.prototype.search = function(params, callback) {
     this.mongoQuery(function (collection) {
-	    stags = tags === undefined? [] : tags.split(",");
-
-	    var query = {'name': '/*'+name + '*/i', 'tags' : { '$all' : stags } };
-	    start = start !== undefined ? start : 0;
-	    query['eventDate'] =  { '$gte' : start };
-	    if(end !== undefined){
-		query['eventDate']['$lt'] = end;
+	    var nameRegex = '.*' + params.name.split(' ').join('.*') + '.*';
+	    var query = {'name': { '$regex' : nameRegex, '$options' : 'i' } };
+	    if (params.tags.length > 0){
+		query['tags'] = { '$all' : params.tags };
 	    }
-
+	    query['eventDate'] =  { '$gte' : params.start };
+	    if(params.end !== undefined){
+		query['eventDate']['$lt'] = params.end;
+	    }
+	    console.log( JSON.stringify(query));
 	    return collection.find(query);
 	}, callback);
 };
@@ -87,6 +88,13 @@ CountdownProvider.prototype.mongoQuery = function(query, callback) {
 			    callback(error);
 			}
 			else {
+			    var i;
+			    for (i = 0; i < results.length; i++){
+				// Convert all results to millis
+				if(results[i].eventDate !== undefined){
+				    results[i].eventDate = results[i].eventDate.getTime();
+				}
+			    }
 			    callback(results);
 			}
 		    });

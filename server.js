@@ -1,8 +1,11 @@
 var fs = require("fs");
 var client = require("./client");
-var bee = require("beeline");
+//var bee = require("beeline");
 var nodeStatic = require("node-static");
-var http = require("http");
+//var http = require("http");
+
+var express = require('express');
+var app = express.createServer();
 
 var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
@@ -37,93 +40,98 @@ var putMongoCountdowns = function (data, resp, window){
     resp.writeHead(200, {"Content-type":"text/html"});
     resp.end(window.document.innerHTML);
 };
-
-var putJsonCountdowns = function(data, resp){
-    resp.writeHead(200, {"Content-type" : "application/json"});
-    resp.end(data);
-};
 	
 
-// Router
-var router = bee.route({
-	"r`^/public.*`" : function(req,res) {
-	    file.serve(req,res);
-	},
-	"r`^/$`" : function (req,res) {
-	    client.client(req, res, putCountdowns(function (c) {
-			return function (callback) {
-			    c.nextWeek(callback);
-			};
-		    }));
-	},
+app.configure( function(req,res) {
+	app.use('/public', express.static('./public'));
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
 
-	"/add" : function (req, res) {
-	    res.writeHead(200, {"Content-type":"text/html"});
-	    res.end(addHtml);
-	},
-	"/day" : function (req,res) {
-	    client.client(req, res, function(r,w) {
-		    countdownProvider.day(function(data){
-			    putMongoCountdowns(data, r, w);
-			});
-		});
-	},
-	"/week" : function (req,res) {
-	    client.client(req, res, function(r,w) {
-		    countdownProvider.week(function(data){
-			    putMongoCountdowns(data, r, w);
-			});
-		});
-	},
-	"/month" : function (req,res) {
-	    client.client(req, res, function(r,w) {
-		    countdownProvider.month(function(data){
-			    putMongoCountdowns(data, r, w);
-			});
-		});
+app.get("/", function (req,res) {
+	client.client(req, res, function(r,w) {
+		countdownProvider.week(function(data){
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+    });
 
-	},
-	"/year" : function (req,res) {
-	    client.client(req, res, function (r, w) {
-		    countdownProvider.year ( function(data) {
-			    putMongoCountdowns(data, r, w);
-			});
-		});
-	},
-	"/random" : function (req,res) {
-	    client.client(req, res, function (r, w) {
-		    countdownProvider.random ( function(data) {
-			    putMongoCountdowns(data, r, w);
-			});
-		});
-	},
-        "/countdowns" : function (req, res) {
-	    console.log(req.url);
-	    if(req.headers['Content-Type'] === 'application/json') {
-		countdownProvider.random(stuff, function(data){
-			putJsonCountdowns(data, resp);
+app.get("/add", function (req, res) {
+	res.writeHead(200, {"Content-type":"text/html"});
+	res.end(addHtml);
+    });
+
+app.get("/day", function (req,res) {
+	client.client(req, res, function(r,w) {
+		countdownProvider.day(function(data){
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+    });
+app.get("/week", function (req,res) {
+	client.client(req, res, function(r,w) {
+		countdownProvider.week(function(data){
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+    });
+app.get("/month", function (req,res) {
+	client.client(req, res, function(r,w) {
+		countdownProvider.month(function(data){
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+
+    });
+app.get("/year", function (req,res) {
+	client.client(req, res, function (r, w) {
+		countdownProvider.year ( function(data) {
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+    });
+app.get("/random", function (req,res) {
+	client.client(req, res, function (r, w) {
+		countdownProvider.random ( function(data) {
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+    });
+app.get("/countdowns", function (req, res) {
+        
+	var params = {};
+	params.name = req.query.name === undefined ? '' : req.query.name;
+	var tempTags = req.query.tags;
+	params.tags = tempTags === undefined ? [] : tempTags.split(',');
+	params.start = new Date(req.query.start === undefined ? 0 : req.query.start);
+	params.end = req.query.end === undefined ? undefined : new Date(req.query.end);
+
+	if(req.is('application/json')){
+	    countdownProvider.search(params, function(data){
+		    res.json(data);
 	        });
-	    }
-	},
-	"r`/(.+)`" : function (req, res, matches) {
-	    var id = matches[0];
-
-	    client.client(req, res, function(r,w) {
-		    countdownProvider.retrieveById(id, function(data){
-			    putMongoCountdowns(data, r, w);
-			});
-		});
-	},
-
-	"`404`" : function (req,res) {
-	    file.serveFile("/404.html", 404, {}, req, res);
-	},
-
-	"`503`" : function (req,res,err) {
-	    console.log("matched 503 because:");
-	    console.error(err.stack);
-	    file.serveFile("/503.html", 503, {}, req, res);
+	}
+	else {
+	    //not handled atm
 	}
     });
-http.createServer(router).listen(8080, "127.0.0.1");
+app.get('/:id', function(req, res) {
+	client.client(req, res, function(r,w) {
+		countdownProvider.retrieveById(req.params.id, function(data){
+			putMongoCountdowns(data, r, w);
+		    });
+	    });
+    });
+
+
+app.get("`404`", function (req,res) {
+	file.serveFile("/404.html", 404, {}, req, res);
+    });
+
+app.get("`503`", function (req,res,err) {
+	console.log("matched 503 because:");
+	console.error(err.stack);
+	file.serveFile("/503.html", 503, {}, req, res);
+    });
+   
+app.listen(8080);
 

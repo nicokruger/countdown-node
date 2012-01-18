@@ -17,7 +17,7 @@ var model = function (countdownHolder, head) {
                 return undefined;
             }
             
-            var sortFunc = function (x) { return x.eventDate.getTime(); };
+            var sortFunc = function (x) { return x.eventDate; };
             var i = _(this.countdowns).sortedIndex(countdownInfo, sortFunc);
             return i < this.countdowns.length ? i : undefined;
         },
@@ -69,7 +69,8 @@ var model = function (countdownHolder, head) {
             var social = $('<span class="countdown-social">' + this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id) + '</span>').appendTo($(outside));
             // Countdown itself
             var cd = $("<span class=\"countdown\" id=\"" + c_id + "\"></span>").appendTo($(outside));
-            countdown(cd, c.eventDate.getTime(), 24, 32, ledColors);
+
+            countdown(cd, c.eventDate, 24, 32, ledColors);
             
             return $(outside);
         },
