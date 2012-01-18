@@ -58,7 +58,22 @@ var actions = function (controller) {
         },
         
         search: function(data) {
-            controller.search(data);
+	    var href = '/countdowns?';
+	    
+	    if(data.name !== undefined){
+		href += ('name=' + encodeURIComponent(data.name) + '&');
+	    }
+	    if(data.tags !== undefined && data.tags !== []) {
+		href += ('tags=' + encodeURIComponent(data.tags.join(',')) + '&');
+	    }
+	    if(data.start != undefined){
+		href += ("start=" + data.start.getTime() + '&');
+	    }
+	    if(data.end != undefined){
+		href += ("end=" + data.end.getTime() + '&');
+	    }
+	    window.location.href = href;
+	    //controller.search(data);
         }
 
                 

@@ -17,9 +17,8 @@ var model = function (countdownHolder, head) {
                 return undefined;
             }
             
-            var sortFunc = function (x) { return x.eventDate; };
+            var sortFunc = function (x) { return x.eventDate.getTime(); };
             var i = _(this.countdowns).sortedIndex(countdownInfo, sortFunc);
-            
             return i < this.countdowns.length ? i : undefined;
         },
         
@@ -30,8 +29,7 @@ var model = function (countdownHolder, head) {
             }
             $(countdownHolder).html(""); // clear
             var that = this;
-            _(countdowns).each(function (countdown) {
-		    console.log("putting countdown ..." + countdown.name);
+            _(countdowns).each(function (countdown) {	   
                 that._putCountdown(countdown);
             });
         },
@@ -57,24 +55,23 @@ var model = function (countdownHolder, head) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
                 this.countdowns.push(c);
             } else {
-                outside = $('<li class="countdown"></li>').insertBefore($(countdownHolder).find("#" + this.countdowns[where].url).parent());
+                outside = $('<li class="countdown"></li>').insertBefore($(countdownHolder).find("#" + this.countdowns[where]._id.toString()).parent());
                 this.countdowns.splice(where, 0, c);
             }
 
             // Name of countdown
-            var countdownName = $('<span class="countdown-name"><a href="' + c.url + '">' + c.name + '</a></span>').appendTo($(outside));
+            var countdownName = $('<span class="countdown-name"><a href="' + c_id + '">' + c.name + '</a></span>').appendTo($(outside));
             
             // Tags
             $(countdownName).append('<span class="countdown-tags">' + c.tags + '</span>');
            
             // Social links
-            var social = $('<span class="countdown-social">' + this._twitter_link(c.url) + this._facebook_link(c.url) + this._plusone_link(c.url) + '</span>').appendTo($(outside));
+            var social = $('<span class="countdown-social">' + this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id) + '</span>').appendTo($(outside));
             // Countdown itself
-            var cd = $("<span class=\"countdown\" id=\"" + c.url + "\"></span>").appendTo($(outside));
-            countdown(cd, c.eventDate, 24, 32, ledColors);
+            var cd = $("<span class=\"countdown\" id=\"" + c_id + "\"></span>").appendTo($(outside));
+            countdown(cd, c.eventDate.getTime(), 24, 32, ledColors);
             
             return $(outside);
-
         },
     _facebook_link : function(url) {
         return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
@@ -92,7 +89,7 @@ var model = function (countdownHolder, head) {
             title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
             //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
             ogtype: '<meta property="og:type" content="website" />',
-            url: '<meta property="og:url" content="http://www.whenis.co.za/' + c.url + '" />',
+            url: '<meta property="og:url" content="http://www.whenis.co.za/' + c._id.toString() + '" />',
             description: '<meta property="og:description" content="WhenIs - Release Dates For Games, Movies, Music and Everything Else" />',
             metaTags: function(){
                 return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");

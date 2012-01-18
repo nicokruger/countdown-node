@@ -32,11 +32,10 @@ var putCountdowns = function (controllerAction) {
 };
 
 var putMongoCountdowns = function (data, resp, window){
-    console.log("In putMongoCountdowns");
+    window.c.clear();
     window.m.putCountdowns(data);
     resp.writeHead(200, {"Content-type":"text/html"});
     resp.end(window.document.innerHTML);
-    console.log("fsdafasd");
 };
 	
 
@@ -58,11 +57,11 @@ var router = bee.route({
         res.end(addHtml);
     },
 	"/day" : function (req,res) {
-		client.client(req, res, putCountdowns(function (c) {
-			return function (callback) {
-				c.nextDay(callback);
-			};
-		}));
+	     client.client(req, res, function(r,w) {
+		    countdownProvider.day(function(data){
+			    putMongoCountdowns(data, r, w);
+		    });
+		 });
 	},
 	"/week" : function (req,res) {
 	        client.client(req, res, function(r,w) {
@@ -72,27 +71,32 @@ var router = bee.route({
 		 });
 	},
 	"/month" : function (req,res) {
-		client.client(req, res, putCountdowns(function (c) {
-			return function (callback) {
-				c.nextMonth(callback);
-			};
-		}));
+	    client.client(req, res, function(r,w) {
+		    countdownProvider.month(function(data){
+			    putMongoCountdowns(data, r, w);
+			});
+		 });
+
 	},
 	"/year" : function (req,res) {
-		client.client(req, res, putCountdowns(function (c) {
-			return function (callback) {
-				c.nextYear(callback);
-			};
-		}));
+	    client.client(req, res, function (r, w) {
+		    countdownProvider.year ( function(data) {
+			    putMongoCountdowns(data, r, w);
+		    });
+		});
 	},
 	"/random" : function (req,res) {
-
-		//	client.client(req, res, putCountdowns(function (c) {
-		//	return function (callback) {
-		//		c.random(callback);
-		//	};
-		// }));
+	     client.client(req, res, function (r, w) {
+		    countdownProvider.random ( function(data) {
+			    putMongoCountdowns(data, r, w);
+		    });
+		});
 	},
+        "/search" : function (req, res) {
+	    if(req.headers['Content-Type'] === 'application/json') {
+		
+	    }
+        },
 	"r`/(.+)`" : function (req, res, matches) {
 		var id = matches[0];
 
