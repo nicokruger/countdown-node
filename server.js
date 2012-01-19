@@ -9,6 +9,13 @@ var client = require("./client");
 var controller = require("./public/controller.js").controller;
 var CountdownProvider = require("./countdown_provider").CountdownProvider;
 
+// Special NotFound exception for 404's
+function NotFound(msg){
+  this.name = 'NotFound';
+  Error.call(this, msg);
+  Error.captureStackTrace(this, arguments.callee);
+}
+NotFound.prototype.__proto__ = Error.prototype;
 var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
 var addHtml = fs.readFileSync("add.html").toString();
@@ -31,7 +38,7 @@ var logger = new (winston.Logger)({
 logger.cli();
 
 var failure = function (req, resp, error) {
-    logger.error("When Is Failure", {req: req.url, error: error});
+    logger.error("When Is Failure", {req: req.url, error_s: error.toString(), error: error});
     client.error503(req, resp, function (r,w) {
         var $ = w.$;
         $("#message").html(error.toString());
@@ -82,7 +89,7 @@ router.get("/", function (req,res) {
 		countdownProvider.week(function(data){
 			putMongoCountdowns(data, r, w);
         });
-    });
+    }, underscore.bind(failure, undefined, req, res));
 });
 
 router.get("/add", function (req, res) {
@@ -94,7 +101,7 @@ router.get("/day", function (req,res) {
 		countdownProvider.day(function(data){
 			putMongoCountdowns(data, r, w);
         });
-    });
+    }, underscore.bind(failure, undefined, req, res));
 });
 
 router.get("/week", function (req,res) {
@@ -102,28 +109,28 @@ router.get("/week", function (req,res) {
 		countdownProvider.week(function(data){
 			putMongoCountdowns(data, r, w);
         });
-    });
+    }, underscore.bind(failure, undefined, req, res));
 });
 router.get("/month", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
 		countdownProvider.month(function(data){
 			putMongoCountdowns(data, r, w);
 		});
-	});
+	}, underscore.bind(failure, undefined, req, res));
 });
 router.get("/year", function (req,res) {
 	client.countdowns(req, res, function (r, w) {
 		countdownProvider.year ( function(data) {
 			putMongoCountdowns(data, r, w);
 		});
-	});
+	}, underscore.bind(failure, undefined, req, res));
 });
 router.get("/random", function (req,res) {
 	client.countdowns(req, res, function (r, w) {
 		countdownProvider.random ( function(data) {
 			putMongoCountdowns(data, r, w);
 		});
-	});
+	}, underscore.bind(failure, undefined, req, res));
 });
 router.get("/countdowns", function (req, res) {
         
@@ -137,7 +144,7 @@ router.get("/countdowns", function (req, res) {
 	if(req.is('application/json')){
         countdownProvider.search(params, function(data){
             res.json(data);
-        });
+        }, underscore.bind(failure, undefined, req, res));
 	}
 	else {
         r.writeHead(400, {"Content-type":"text/html"});
@@ -150,14 +157,14 @@ router.post('/upsert', function (req, res) {
     logger.info('upserting ' + countdown.eventDate.getTime());
     countdownProvider.upsert(countdown, function(data) {
 		res.json(data);
-    });
+    }, underscore.bind(failure, undefined, req, res));
 });
 
 router.post('/insert', function (req, res) {
 	var countdown = countdownFromReq(req);
 	countdownProvider.insert(countdown, function(data) {
 		res.json(data);
-	});
+	}, underscore.bind(failure, undefined, req, res));
 });
 
 router.get("/favicon.ico", function (req,res) {
@@ -169,7 +176,10 @@ router.get("/robots.txt", function (req,res) {
 });
 
 router.get('/:id', function(req, res) {
-    var id =req.params.id;
+    var id = req.params.id;
+    if (id.length !== 24) {
+        throw new NotFound();
+    }
     var query = url.parse(req.url,true).query;
 
     // determine which client to use - normal or headless by looking at the headless query parameter
@@ -188,14 +198,23 @@ router.get('/:id', function(req, res) {
     }
 });
 
-router.get("`404`", function (req,res) {
-    file.serveFile("/404.html", 404, {}, req, res);
+router.get("*", function (req,resp,err) { // fallback for 404's
+    client.error404(req, resp, function (r,w) {
+        r.writeHead(404, {"Content-type":"text/html"});
+        r.end(w.document.innerHTML);
+    });
 });
 
-router.get("`503`", function (req,res,err) {
-	logger.error("matched 503 because:", {err: err});
-	file.serveFile("/503.html", 503, {}, req, res);
+router.error(function(err, req, res, next){
+    if (err instanceof NotFound) {
+        // our special 404
+        client.error404(req, res, function (r,w) {
+            res.writeHead(404, {"Content-type":"text/html"});
+            res.end(w.document.innerHTML);
+        });
+    } else {
+        next(err);
+    }
 });
-   
 router.listen(8080);
 

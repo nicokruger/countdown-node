@@ -16,16 +16,15 @@ var CountdownProvider = function(host, port) {
 };
 
 CountdownProvider.prototype.collection = function(callback, failure){
-    failure("Testing...........");
-    /*this.db.collection('countdown', function(error, coll){
+    this.db.collection('countdown', function(error, coll){
         if(error) {
             console.log("error: " + error);
-            failure(error);
+            callback(error);
         }
         else {
             callback(null, coll);
         }
-    });*/
+    });
 };
 
 CountdownProvider.prototype.retrieveAll = function (callback, failure) {

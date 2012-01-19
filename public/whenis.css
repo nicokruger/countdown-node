@@ -210,3 +210,18 @@ div.error503 p {
     margin-top: 15px;
     font-size: 16px;
 }
+
+.error404 {
+    margin: 0 auto;
+    width: 800px;
+    background-color: #ffffff;
+    padding: 0px;
+    padding-top: 10px;
+}
+div.error404 p {
+    margin-top:25px;
+    margin-left: 15px;
+    margin-right: 15px;
+    font-size: 16px;
+}
+

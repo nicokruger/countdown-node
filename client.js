@@ -57,7 +57,6 @@ var createPage = function (completed, html, scripts) {
                 scriptLoaded();
             };
             script.onerror = function () {
-                console.log("script error!");
                 scriptLoaded();
             };
 
@@ -119,7 +118,19 @@ createPage(function (window) {
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : fs.readFileSync("./header.html").toString(),
         "content" : fs.readFileSync("./503.html").toString(),
-        "footer" : fs.readFileSync("./footer.html").toString(),
+        "footer" : fs.readFileSync("./footer-contact.html").toString(),
+        "css" : "/public/whenis.css",
+        "indexjs": "/public/index.js"
+    }
+), scripts);
+
+// Create the 404 DOM
+createPage(function (window) {
+    exports.error404Window = loadCompleted(window);
+}, underscore.template(fs.readFileSync("./index.html").toString(),
+    {   "header" : "",
+        "content" : fs.readFileSync("./404.html").toString(),
+        "footer" : fs.readFileSync("./footer-contact.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js"
     }
@@ -139,4 +150,8 @@ exports.headless = function (req, resp, sendClient) {
 
 exports.error503 = function (req, resp, sendClient) {
     sendClient(resp, this.error503Window);
+};
+
+exports.error404 = function (req, resp, sendClient) {
+    sendClient(resp, this.error404Window);
 };
