@@ -1,27 +1,37 @@
 var fs = require("fs");
 var url = require("url");
-var client = require("./client");
-//var bee = require("beeline");
 var nodeStatic = require("node-static");
-var http = require("http");
-var controller = require("./public/controller.js").controller;
-var underscore = require("./public/vendor/underscore.js");
 var express = require('express');
-var app = express.createServer();
+var winston = require("winston");
+var underscore = require("./public/vendor/underscore.js");
+
+var client = require("./client");
+var controller = require("./public/controller.js").controller;
+var CountdownProvider = require("./countdown_provider").CountdownProvider;
 
 var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
 var addHtml = fs.readFileSync("add.html").toString();
 
+// http router
+var router = express.createServer();
 // Static file server
 var file = new (nodeStatic.Server)("./");
-
-var CountdownProvider = require("./countdown_provider").CountdownProvider;
+// countdowns from mongo!!
 var countdownProvider = new CountdownProvider("localhost", 27017);
 
+// winston logging
+var logger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.Console)({ timestamp: true }),
+      new (winston.transports.File)({ filename: 'whenis.log', timestamp: true, json:false })
+    ]
+  });
+// make winston pretty print stuff on console
+logger.cli();
+
 var failure = function (req, resp, error) {
-    console.log("For the url " + req.url +" :" );
-    console.error("Error: " + error);
+    logger.error("When Is Failure", {req: req.url, error: error});
     client.error503(req, resp, function (r,w) {
         var $ = w.$;
         $("#message").html(error.toString());
@@ -62,12 +72,12 @@ var countdownFromReq = function(req){
         }));
     },
 */
-app.configure( function(req,res) {
-	app.use('/public', express.static('./public')); // static is a reserved word
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+router.configure( function(req,res) {
+	router.use('/public', express.static('./public')); // static is a reserved word
+	router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-app.get("/", function (req,res) {
+router.get("/", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
 		countdownProvider.week(function(data){
 			putMongoCountdowns(data, r, w);
@@ -75,11 +85,11 @@ app.get("/", function (req,res) {
     });
 });
 
-app.get("/add", function (req, res) {
+router.get("/add", function (req, res) {
     client.add(req, res, success);
 });
 
-app.get("/day", function (req,res) {
+router.get("/day", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
 		countdownProvider.day(function(data){
 			putMongoCountdowns(data, r, w);
@@ -87,35 +97,35 @@ app.get("/day", function (req,res) {
     });
 });
 
-app.get("/week", function (req,res) {
+router.get("/week", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
 		countdownProvider.week(function(data){
 			putMongoCountdowns(data, r, w);
         });
     });
 });
-app.get("/month", function (req,res) {
+router.get("/month", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
 		countdownProvider.month(function(data){
 			putMongoCountdowns(data, r, w);
 		});
 	});
 });
-app.get("/year", function (req,res) {
+router.get("/year", function (req,res) {
 	client.countdowns(req, res, function (r, w) {
 		countdownProvider.year ( function(data) {
 			putMongoCountdowns(data, r, w);
 		});
 	});
 });
-app.get("/random", function (req,res) {
+router.get("/random", function (req,res) {
 	client.countdowns(req, res, function (r, w) {
 		countdownProvider.random ( function(data) {
 			putMongoCountdowns(data, r, w);
 		});
 	});
 });
-app.get("/countdowns", function (req, res) {
+router.get("/countdowns", function (req, res) {
         
 	var params = {};
 	params.name = req.query.name === undefined ? '' : req.query.name;
@@ -130,34 +140,35 @@ app.get("/countdowns", function (req, res) {
         });
 	}
 	else {
-        //not handled atm
+        r.writeHead(400, {"Content-type":"text/html"});
+        r.end("Not valid");
 	}
 });
 
-app.post('/upsert', function (req, res) {
+router.post('/upsert', function (req, res) {
 	var countdown = countdownFromReq(req);
-    console.log('upserting '+ countdown.eventDate.getTime());
+    logger.info('upserting ' + countdown.eventDate.getTime());
     countdownProvider.upsert(countdown, function(data) {
 		res.json(data);
     });
 });
 
-app.post('/insert', function (req, res) {
+router.post('/insert', function (req, res) {
 	var countdown = countdownFromReq(req);
 	countdownProvider.insert(countdown, function(data) {
 		res.json(data);
 	});
 });
 
-app.get("/favicon.ico", function (req,res) {
+router.get("/favicon.ico", function (req,res) {
     file.serve(req,res);
 });
 
-app.get("/robots.txt", function (req,res) {
+router.get("/robots.txt", function (req,res) {
     file.serve(req,res);
 });
 
-app.get('/:id', function(req, res) {
+router.get('/:id', function(req, res) {
     var id =req.params.id;
     var query = url.parse(req.url,true).query;
 
@@ -177,15 +188,14 @@ app.get('/:id', function(req, res) {
     }
 });
 
-app.get("`404`", function (req,res) {
+router.get("`404`", function (req,res) {
     file.serveFile("/404.html", 404, {}, req, res);
 });
 
-app.get("`503`", function (req,res,err) {
-	console.log("matched 503 because:");
-	console.error(err.stack);
+router.get("`503`", function (req,res,err) {
+	logger.error("matched 503 because:", {err: err});
 	file.serveFile("/503.html", 503, {}, req, res);
 });
    
-app.listen(8080);
+router.listen(8080);
 

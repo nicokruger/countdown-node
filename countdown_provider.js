@@ -146,7 +146,7 @@ CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
                     callback(results);
                 }
             });
-        }});
+        }},failure);
 };
 
 exports.CountdownProvider = CountdownProvider;
