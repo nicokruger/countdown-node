@@ -14,7 +14,7 @@ var loadCompleted = function (window) {
     var controller = window.controller;
     var timo = window.timo;
     var m = model($("#countdownlist"), $("head"), timo.noCounterType);
-    var c = controller(m, "http://localhost:55555");
+    var c = controller(m, "http://localhost:8080");
 
     window.m = m;
     window.c = c;
@@ -113,6 +113,18 @@ createPage(function (window) {
     }
 ), scripts);
 
+// Create the 503 DOM
+createPage(function (window) {
+    exports.error503Window = loadCompleted(window);
+}, underscore.template(fs.readFileSync("./index.html").toString(),
+    {   "header" : fs.readFileSync("./header.html").toString(),
+        "content" : fs.readFileSync("./503.html").toString(),
+        "footer" : fs.readFileSync("./footer.html").toString(),
+        "css" : "/public/whenis.css",
+        "indexjs": "/public/index.js"
+    }
+), scripts);
+
 exports.countdowns = function (req, resp, sendClient) {
     sendClient(resp, this.countdownClientWindow);
 };
@@ -122,5 +134,9 @@ exports.add = function (req, resp, sendClient) {
 };
 
 exports.headless = function (req, resp, sendClient) {
-  sendClient(resp, this.headlessWindow);
+    sendClient(resp, this.headlessWindow);
+};
+
+exports.error503 = function (req, resp, sendClient) {
+    sendClient(resp, this.error503Window);
 };

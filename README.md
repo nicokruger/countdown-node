@@ -9,13 +9,14 @@ From the first request onwards, the client does AJAX requests from the clients' 
 Usage
 -----
 
-You need node.js, and then the following node.js modules (installed with npm): jsdom, node-static, beeline
+You need node.js, and then the following node.js modules (installed with npm): jsdom, node-static, express
 
 So basically, you need to install node.js and npm using your distro package manager. Then do:
 
      npm install jsdom
      npm install node-static
-     npm install beeline
+     npm install mongodb --mongodb:native
+     npm install express
 
 Then run with the following command:
 

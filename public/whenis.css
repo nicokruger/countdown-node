@@ -197,3 +197,16 @@ input {
     background: #F5F5F1;
     color: #222222;
 }
+
+.error503 {
+    margin: 0 auto;
+    width: 800px;
+    background-color: #ffffff;
+    padding: 0px;
+    padding-top: 10px;
+}
+
+div.error503 p {
+    margin-top: 15px;
+    font-size: 16px;
+}

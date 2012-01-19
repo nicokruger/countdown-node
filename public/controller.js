@@ -1,47 +1,51 @@
-var controller = function (model, server) {
-    
-    server = server === undefined ? "" : server;
 
-    var countdownAction = function (url, data, method, success, failure, ogp) {
+var controller = function (model, server) {
+    server = server === undefined ? "" : server;
+    var isArray = function(value) {
+        return Object.prototype.toString.apply(value) == '[object Array]';
+    };
+
+    var countdownAction = function (config)  {
 
         $.ajax({
-            url: server + url,
+            url: server + config.url,
             //url: "http://localhost:55555/filesystem/index.html",
-            data: data,
-            type: method,
+            data: config.data,
+            type: config.method,
             dataType: "json",
+            beforeSend: function( xhr ) {
+                xhr.setRequestHeader('Content-Type', 'application/json');
+            },
             success: function (o) {
                 console.log("Received response: " + JSON.stringify(o));
                 model.clear();
-
                 if (o.hasOwnProperty("error")) {
-                    if (failure !== undefined) {
-                        failure(o.error);
+                    if (config.failure !== undefined) {
+                        config.failure(o.error);
                     }
                 }
-                if (o.hasOwnProperty("countdowns")) {
-                    if(ogp === undefined) {
-                        model.putCountdowns(o.countdowns);
-                    }
-                    else {
-                        model.putCountdownOGP(o.countdowns[0]);
+                if (isArray(o)) {
+                    if(config.ogp === undefined) {
+                        model.putCountdowns(o);
+                    } else {
+                        model.putCountdownOGP(o[0]);
                     }
                 } else {
                     model.putCountdown(o);
                 }
-                if (success !== undefined) {
-                    success(o);
+                if (config.success !== undefined) {
+                    config.success(o);
                 }
             },
             error: function (e) {
                 $("#info").html("An error occurred... Please try again." + JSON.stringify(e));
-                if (typeof(failure) !== "undefined") {
-                    failure(e);
+                if (typeof(config.failure) !== "undefined") {
+                    config.failure(e);
                 }
             }
         });
     };
-    
+
     return {
         clear: function (e) {
             model.clear();
@@ -49,13 +53,12 @@ var controller = function (model, server) {
             $("head > meta").remove(); // clear all meta tags
         },
         random: function (callback, failure) {
-            countdownAction("/random", {}, "GET", callback, failure);
-        },
-        nextDay: function (callback, failure) {
-            countdownAction("/day", {}, "GET", callback, failure);
-        },
-        nextWeek: function (callback, failure) {
-            countdownAction("/week", {}, "GET", callback, failure);
+            countdownAction({url: "/random",
+                data: {},
+                method: "GET",
+                success: callback,
+                failure: failure
+            });
         },
         nextMonth: function (callback, failure) {
             countdownAction("/month", {}, "GET", callback, failure);
