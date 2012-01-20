@@ -96,7 +96,7 @@ createPage(function (window) {
         "content" : fs.readFileSync("./add.html").toString(),
         "footer" : fs.readFileSync("./footer.html").toString(),
         "css" : "/public/whenis.css",
-        "indexjs" : "/public/index.js"
+        "indexjs" : "/public/add.js"
     }
 ), scripts);
 

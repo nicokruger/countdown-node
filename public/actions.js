@@ -46,7 +46,7 @@ var actions = function (controller) {
         },
         
         search: function(data) {
-	    controller.search(data);
+            controller.search(data);
         }
 
                 

@@ -17,7 +17,6 @@ var controller = function (model, server) {
                 xhr.setRequestHeader('Content-Type', 'application/json');
             },
             success: function (o) {
-                console.log("Received response: " + JSON.stringify(o));
                 model.clear();
                 if (o.hasOwnProperty("error")) {
                     if (config.failure !== undefined) {
@@ -38,7 +37,7 @@ var controller = function (model, server) {
                 }
             },
             error: function (e) {
-                $("#info").html("An error occurred... Please try again." + JSON.stringify(e));
+                model.messages.error("An error occurred. Please try again. If the problem persists, something is broken. We will fix it shortly.");
                 if (typeof(config.failure) !== "undefined") {
                     config.failure(e);
                 }
@@ -49,7 +48,6 @@ var controller = function (model, server) {
     return {
         clear: function (e) {
             model.clear();
-            $("#info").html("");
             $("head > meta").remove(); // clear all meta tags
         },
         random: function (callback, failure) {
@@ -75,8 +73,12 @@ var controller = function (model, server) {
         countdown: function (id, callback, failure) {
             countdownAction("?" + id, {}, "GET", callback, failure, true);
         },
+        newCountdown:  function (data, callback, failure) {
+            // contentType: "application/json",
+            countdownAction("/insert", {countdown:data}, "POST", callback, failure);
+        },
+        messages: model.messages,
         countdownAction: countdownAction
-
     };
 };
 

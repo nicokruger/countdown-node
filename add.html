@@ -1,46 +1,4 @@
-<script>
-
-$(function () {
-    $("#newcountdownForm").bind("submit", newCountdown);
-});
-
-var newCountdown = function (e) {
-    e.preventDefault();
-    var ed;
-    try {
-        ed = moment($("#countdownDatetime").val(), "YYYY-MM-DDTHH:mm");
-    } catch (err) {
-        alert("cannot parse date: " + err);
-        return;
-    }
-    
-    if (ed == null ) {
-        alert("invalid date");
-        return;
-    }
-    var data = {
-        name: $("#countdownName").val(),
-        tags: $("#countdownTags").val(),
-        eventDate:  ed.native().getTime()
-    };
-
-    $.ajax({
-        url: "http://" + window.location.hostname + ":55555/countdown/new", 
-        data: data,
-        type: "POST",
-        dataType: "json",
-        success: function (o) {
-            window.location.href = "/" + o.countdowns[0].url;
-        }, 
-        error: function (e) {
-            $("#info").html("An error occurred... Please try again");
-        }
-    });
-};
-    
-</script>
-
-<div class="addcounter">
+<div class="addcounter main-item">
     <form id="newcountdownForm" method="post">
 
         <fieldset>
@@ -73,7 +31,9 @@ var newCountdown = function (e) {
             </div>
         </fieldset>            
     </form> 
+
 </div>
 
-<div id="info">
-</div>
+
+<ul id="countdownlist">
+</ul>

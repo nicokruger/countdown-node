@@ -64,9 +64,10 @@ var parseTags = function(tagsString) {
 
 var countdownFromReq = function(req){
     var countdown = {};
-	countdown.tags = parseTags(req.query.tags);
-	countdown.name = req.query.name === undefined ? 'no-name' : req.query.name;
-	countdown.eventDate = new Date(req.query.eventDate === undefined ? 0 : parseInt(req.query.eventDate, 10));
+    console.log("Req: " + JSON.stringify(req.body));
+	countdown.tags = parseTags(req.body.tags);
+	countdown.name = req.query.name === undefined ? 'no-name' : req.body.name;
+	countdown.eventDate = new Date(req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10));
     return countdown;
 };
 
@@ -93,7 +94,10 @@ router.get("/", function (req,res) {
 });
 
 router.get("/add", function (req, res) {
-    client.add(req, res, success);
+    client.add(req, res, function (r,w) {
+        res.writeHead(200, {"Content-type":"text/html"});
+        res.end(w.document.innerHTML);
+    }, underscore.bind(failure, undefined, req, res));
 });
 
 router.get("/day", function (req,res) {
@@ -163,7 +167,7 @@ router.post('/upsert', function (req, res) {
 router.post('/insert', function (req, res) {
 	var countdown = countdownFromReq(req);
 	countdownProvider.insert(countdown, function(data) {
-		res.json(data);
+		res.json({countdowns:data});
 	}, underscore.bind(failure, undefined, req, res));
 });
 

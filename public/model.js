@@ -15,7 +15,18 @@ var formatDate = function (t) {
 
 var timoTypes = [timo.normalCounterType, timo.noCounterType, timo.ledCounterType(ledTheme)];
 
+var logger = function (where) {
+    return {
+        error: function (message) {
+            $(where).append('<div class="alert-message error">' + message + '</div>');
+        },
+        clear: function () {
+            $(where).html();
+        }
+    };
+};
 var model = function (countdownHolder, head, timoCounterType) {
+    var messages = logger($("<div class=\"messages\"></div>").insertBefore(countdownHolder));
     var countdownQuery = ".countdown-counter";
     var counters;
     var makeCounters = function () {
@@ -76,7 +87,7 @@ var model = function (countdownHolder, head, timoCounterType) {
             var meta = this._ogp(c).metaTags();
             $(head).append(meta);
         },
-        
+
         //ads a countdown, does not refresh the view
         _putCountdown: function (c) {
             var where = this.find(c), outside, c_id = c._id.toString();
@@ -115,6 +126,7 @@ var model = function (countdownHolder, head, timoCounterType) {
     _plusone_link : function(url) {
         return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenis.co.za/' + url + '"></g:plusone></span>';
     },
+    messages: messages,
     _ogp : function(c) {
         return {
             title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
@@ -131,6 +143,7 @@ var model = function (countdownHolder, head, timoCounterType) {
         pending: 0,
         
         clear: function () {
+            messages.clear();
             this.countdowns = [];
             countdownHolder.html(emptyHtml);
         }
