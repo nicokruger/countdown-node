@@ -1,28 +1,37 @@
 <div class="addcounter main-item">
-    <form id="newcountdownForm" method="post">
+    <form id="newcountdownForm" method="post" class="form-stacked">
 
         <fieldset>
             <legend>Add new counter</legend>
 
             <div class="clearfix">
-                <label for="countdownTags">Name:</label>
+                <label for="countdownTags">Choose a name:</label>
                 <div class="input">
-                    <input class="xlarge" required type="text" name="countdownName" id="countdownName" value="" />
+                    <input tabindex="1" class="xlarge" required type="text" name="countdownName" id="countdownName" value="" />
                 </div>
             </div>
 
             <div class="clearfix">
-                <label for="countdownTags">Tags:</label>
                 <div class="input">
-                    <input class="xlarge" type="text" name="countdownTags" id="countdownTags" value="" />
+                    <div class="date">
+                        <label for="countdownDatetime">Give the day:<br/></label>
+                        <div class="input">
+                            <input tabindex="2" id="countdownDatetime" type="text" value="" />
+                        </div>
+                    </div>
+                    <div class="time">
+                        <label for="countdownTime">Give the time:</label>
+                        <div class="input">
+                            <input tabindex="3" id="countdownTime" type="text" value="hour" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="clearfix">
-                <label for="countdownDatetime">When<br/></label>
+                <label for="countdownTags">Optional tags (space seperated):</label>
                 <div class="input">
-                    <input required type="datetime-local/" name="countdownDatetime" id="countdownDatetime" value="" />
-                    <span class="help-block"> (YY-MM-DDThh:mm eg. 2011-12-01T13:00)</span>
+                    <input tabindex="5" class="xlarge" type="text" size="50" name="countdownTags" id="countdownTags" value="nohash #hash somethnigelse" />
                 </div>
             </div>
 
@@ -31,9 +40,9 @@
             </div>
         </fieldset>            
     </form> 
-
 </div>
 
 
 <ul id="countdownlist">
 </ul>
+

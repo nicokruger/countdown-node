@@ -7,12 +7,12 @@ var ledTheme = {
     height: 32
 };
 
+var countdownQuery = ".countdown-counter";
 var emptyHtml = "<div class=\"no-counters\">Oops! There are no counters for your selection. Try a different search or time range.</div>";
 var formatDate = function (t) {
     var d = new Date(t);
     return d.getFullYear() + "-" + timo.pad(d.getMonth()+1,2) + "-" + timo.pad(d.getDate(),2) + " " + timo.pad(d.getHours(),2) + ":" + timo.pad(d.getMinutes(),2) + " UTC";
 };
-
 var timoTypes = [timo.normalCounterType, timo.noCounterType, timo.ledCounterType(ledTheme)];
 
 var logger = function (where) {
@@ -27,27 +27,24 @@ var logger = function (where) {
 };
 var model = function (countdownHolder, head, timoCounterType) {
     var messages = logger($("<div class=\"messages\"></div>").insertBefore(countdownHolder));
-    var countdownQuery = ".countdown-counter";
     var counters;
-    var makeCounters = function () {
-        counters = timo.counters($(countdownQuery), timoCounterType);
-        $(countdownQuery).click(function () {
-            curTimoType++;
-            if (curTimoType >= timoTypes.length) {
-                curTimoType = 0;
-            }
-            counters.changeType(timoTypes[curTimoType]);
-        });
-    };
-    // find the current timo types' index
     var curTimoType = 0;
+    // find the current timo types' index
     for (var i = 0; i < timoTypes.length; i++) {
         if (timoTypes[i] === timoCounterType) {
             curTimoType = i;
         }
     }
-    //counters = timo.counters($(countdownQuery), timoCounterType);
-    makeCounters();
+    
+    $(countdownQuery).live("click", function () {
+        curTimoType++;
+        if (curTimoType >= timoTypes.length) {
+            curTimoType = 0;
+        }
+        counters.changeType(timoTypes[curTimoType]);
+    });
+    
+    counters = timo.counters($(countdownQuery), timoCounterType);
     return {
         
         countdowns: [],
@@ -73,12 +70,13 @@ var model = function (countdownHolder, head, timoCounterType) {
                 that._putCountdown(countdown);
             });
 
-            makeCounters();
+            counters = timo.counters($(countdownQuery), timoCounterType);
         },
         // adds a countdown, and refreshes the view
         putCountdown: function (c) {
+            $(countdownHolder).html("");
             var o = this._putCountdown(c);
-            makeCounters();
+            counters = timo.counters($(countdownQuery), timoCounterType);
             return o;
         },
         putCountdownOGP: function (c) {
@@ -90,7 +88,7 @@ var model = function (countdownHolder, head, timoCounterType) {
 
         //ads a countdown, does not refresh the view
         _putCountdown: function (c) {
-            var where = this.find(c), outside, c_id = c._id.toString();
+            var where = this.find(c), outside, c_id = (typeof(c._id )!== "undefined") ? c._id.toString() : "";
 
             if (where === undefined) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
@@ -152,5 +150,7 @@ var model = function (countdownHolder, head, timoCounterType) {
 
 };
 
+$(function () {
+});
  
 //exports.model = model;
