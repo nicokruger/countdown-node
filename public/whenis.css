@@ -35,6 +35,10 @@ body {
     padding-top: 10px;
 }
 
+.actions #countdownlist {
+  background: none;
+  padding: 0px;
+}
 #buttonbar {
     border-bottom: 1px solid #efefef;
     border-top: 1px solid #efefef;
@@ -265,7 +269,21 @@ label {
 }
 
 .time input {
-  width: 250px;
+  width: 100px;
+}
+
+.time select {
+  width: 50px;
+  float:left;
+}
+.time span {
+  display: none;
+  float: left;
+  font-size: 24px;
+  line-height: 24px;
+  margin: 0px;
+  padding: 5px;
+  padding-right: 10px;
 }
 
 .datepicker {
@@ -397,4 +415,9 @@ label {
 .datepicker .selected {
   background-color: #bfbfbf;
   color: #ffffff;
+}
+
+.explanatory span {
+  display:block;
+  padding:15px;
 }

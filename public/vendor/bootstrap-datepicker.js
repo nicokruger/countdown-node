@@ -45,7 +45,6 @@
     if((!!options.parse) || (!!options.format) || !this.detectNative()) {
       $.extend(this, options);
       this.$el.data('datepicker', this);
-      console.log("PUSH");
       all.push(this);
       this.init();
     }
@@ -101,13 +100,7 @@
           .change($.proxy(function() { this.selectDate(); }, this));
 
         this.selectDate();
-        var offset = this.$el.offset();
-
-        this.$picker.css({
-          top: offset.top + this.$el.outerHeight() + 2,
-          left: offset.left
-        }).show();
-
+        this.hide();
       }
 
     , nav: function( c, months ) {
@@ -210,12 +203,18 @@
         // Hide all other datepickers.
         clearDatePickers(this);
 
+        var offset = this.$el.offset();
+
+        this.$picker.css({
+          top: offset.top + this.$el.outerHeight() + 2,
+          left: offset.left
+        }).show();
+
         $('html').on('keydown', this.keyHandler);
       }
 
     , hide: function() {
-      //console.log("hide");
-        //this.$picker.hide();
+        this.$picker.hide();
         $('html').off('keydown', this.keyHandler);
       }
 

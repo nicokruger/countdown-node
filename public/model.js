@@ -21,7 +21,7 @@ var logger = function (where) {
             $(where).append('<div class="alert-message error">' + message + '</div>');
         },
         clear: function () {
-            $(where).html();
+            $(where).html("");
         }
     };
 };
@@ -138,13 +138,13 @@ var model = function (countdownHolder, head, timoCounterType) {
         };
     },
         
-        pending: 0,
+    pending: 0,
         
-        clear: function () {
-            messages.clear();
-            this.countdowns = [];
-            countdownHolder.html(emptyHtml);
-        }
+    clear: function () {
+        messages.clear();
+        this.countdowns = [];
+        countdownHolder.html(emptyHtml);
+    }
 
     };
 

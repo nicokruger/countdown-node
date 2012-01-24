@@ -1,11 +1,11 @@
+<script src="public/hour.js"></script>
+
 <div class="addcounter main-item">
     <form id="newcountdownForm" method="post" class="form-stacked">
 
         <fieldset>
-            <legend>Add new counter</legend>
-
             <div class="clearfix">
-                <label for="countdownTags">Choose a name:</label>
+                <label for="countdownName">Choose a name:</label>
                 <div class="input">
                     <input tabindex="1" class="xlarge" required type="text" name="countdownName" id="countdownName" value="" />
                 </div>
@@ -22,27 +22,47 @@
                     <div class="time">
                         <label for="countdownTime">Give the time:</label>
                         <div class="input">
-                            <input tabindex="3" id="countdownTime" type="text" value="hour" />
+                            <input tabindex="3" id="countdownTime" type="text" value="" />
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="clearfix">
+                <label for="countdownTimezone">Which timezone?</label>
+                <div class="input">
+                    <select tabindex="4" id="countdownTimezone">
+                        <option>UTC</option>
+                        <option>Local timezone</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="clearfix">
                 <label for="countdownTags">Optional tags (space seperated):</label>
                 <div class="input">
-                    <input tabindex="5" class="xlarge" type="text" size="50" name="countdownTags" id="countdownTags" value="nohash #hash somethnigelse" />
+                    <input tabindex="5" class="xlarge" type="text" size="50" name="countdownTags" id="countdownTags" value="" />
                 </div>
             </div>
 
             <div class="actions">
-                <input type="submit" class="btn primary" value="Add Countdown" />
+                <div id="preview">
+                    <div class="alert-message info">Preview:</div>
+                    <ul id="countdownlist">
+                    </ul>
+                </div>
+                <input type="submit" class="btn primary" value="Add public countdown" />
+                <input type="submit" class="btn" value="Add private countdown" />
+                <input type="submit" class="btn" value="Add public and add another" />
+                <div class="explanatory">
+                    <span><b>Public</b> counters are visible to anyone, through the main interface and searches.</span>
+                    <span><b>Private</b> counters will NOT be visible through the main interface or through searches. You will get a private URL which you can use
+                    to share with your friends. Only the people you give it to will be able to see your counter.</span>
+                </div>
             </div>
         </fieldset>            
     </form> 
 </div>
 
 
-<ul id="countdownlist">
-</ul>
 
