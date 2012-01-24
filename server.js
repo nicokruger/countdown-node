@@ -20,6 +20,10 @@ var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
 var addHtml = fs.readFileSync("add.html").toString();
 
+//pagination limit and initial query marker
+var defaultLimit = 20,
+    defaultLast = {name: ' ', eventDate: new Date()};
+
 // http router
 var router = express.createServer();
 // Static file server
@@ -71,6 +75,18 @@ var countdownFromReq = function(req){
     return countdown;
 };
 
+var getPaginationParams = function(req){
+    var limit = req.query.limit === undefined? defaultLimit : req.query.limit;
+    var last = defaultLast;
+    if(req.query.eventDate !== undefined && req.query.name !== undefined){
+        last = {name : req.query.name, eventDate: req.query.eventDate };
+    }
+    return {'last' : last, 'limit' : limit};
+};
+    
+        
+        
+
 /**
     "r`/tags/(.+)`": function (req, res, matches) {
         client.countdowns(req, res, putCountdowns(function (c) {
@@ -109,22 +125,25 @@ router.get("/day", function (req,res) {
 });
 
 router.get("/week", function (req,res) {
+
+    var pagination = getPaginationParams(req);
+    console.log( JSON.stringify(pagination));
 	client.countdowns(req, res, function(r,w) {
-		countdownProvider.week(function(data){
+		countdownProvider.week(pagination, function(data){
 			putMongoCountdowns(data, r, w);
         });
     }, underscore.bind(failure, undefined, req, res));
 });
 router.get("/month", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
-		countdownProvider.month(function(data){
+		countdownProvider.month(getPaginationParams(req), function(data){
 			putMongoCountdowns(data, r, w);
 		});
 	}, underscore.bind(failure, undefined, req, res));
 });
 router.get("/year", function (req,res) {
 	client.countdowns(req, res, function (r, w) {
-		countdownProvider.year ( function(data) {
+		countdownProvider.year (getPaginationParams(req), function(data) {
 			putMongoCountdowns(data, r, w);
 		});
 	}, underscore.bind(failure, undefined, req, res));
