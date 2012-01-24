@@ -126,34 +126,30 @@ CountdownProvider.prototype.paginatedQuery = function(query, sortBy, pagination,
 
         //modify the query to be greater than the last name and millis
         var oldName = query.name,
-            newName = {name: {$lt : pagination.last.name}};
+            newName = {name: {$gt : pagination.last.name}};
 
         //if the query already had a name constraint we have to $and them
-        //query.name = newName.name;
+        query.name = newName.name;
         if(oldName !== undefined) {
             query.name = { $and : [ oldName, newName ]};
         }
         
         //if query already had a start ( $gt on eventdate) just swap it
-        // if(query.eventDate !== undefined){
-        //     query.eventDate['$gt'] = pagination.last.eventDate;  //might have an $lt we do not want to lose
-        //     delete query.eventDate['$gte'];
-        // }
-        // else {
-        //     query.eventDate = {$gt : pagination.last.eventDate };
-        // }
+        if(query.eventDate !== undefined){
+            query.eventDate['$gt'] = pagination.last.eventDate;  //might have an $lt we do not want to lose
+            delete query.eventDate['$gte'];
+        }
+        else {
+            query.eventDate = {$gt : pagination.last.eventDate };
+        }
         
-        //console.log('paginatified query is: ' + JSON.stringify(query) );
-   
+        //console.log("QUERY : "+ JSON.stringify(query));
         var cursor = collection.find(query);
-        //console.log("Limit is: "+pagination.limit);
-        //console.log("SORTY BY: " + JSON.stringify(sortBy));
-        //console.log(cursor.length);
-        return cursor; //.sort(sortBy).limit(pagination.limit);
+        return cursor.sort(sortBy).limit(pagination.limit);
     }, callback, failure);
 };
 
-CountdownProvider.prototype.sortBy = { eventDate: -1 };
+CountdownProvider.prototype.sortBy = { eventDate: 1, name: -1};
 
 CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
     this.collection(function(error, coll){
@@ -165,13 +161,16 @@ CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
                     failure(error);
                 }
                 else {
+                    //console.log("Got results "+results.length);
                     var i;
                     for (i = 0; i < results.length; i++){
+                        //console.log(results[i].name);
                         // Convert all results to millis
                         if(results[i].eventDate !== undefined){
                             results[i].eventDate = results[i].eventDate.getTime();
                         }
                     }
+                    
                     callback(results);
                 }
             });

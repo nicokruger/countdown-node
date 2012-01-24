@@ -24,6 +24,10 @@ $(function () {
   $("#fetchMonth").click(action.nextMonth);
   $("#fetchYear").click(action.nextYear);
 
+  //pagination
+  $("#next_link").click(action.next);
+  $("#prev_link").click(action.prev);
+
   $("#searchForm").bind("submit", action.search);
 
   $("#searchbox").keyup(function (e) {

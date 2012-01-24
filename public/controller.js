@@ -1,9 +1,19 @@
 
 var controller = function (model, server) {
+    
     server = server === undefined ? "" : server;
+
     var isArray = function(value) {
         return Object.prototype.toString.apply(value) == '[object Array]';
     };
+    var parseLast = function(){
+        var lastName = $('#countdownlist li:last-child > .countdown-name > a').text();
+        var lastMillis = $('#countdownlist li:last-child > .countdown-counter').attr('data-eventdate');
+        console.log(lastName + " " + lastMillis);
+        return {name: lastName, eventDate: new Date(parseInt(lastMillis, 10))};
+    };
+    
+    var lastAction = undefined;
 
     var countdownAction = function (config)  {
 
@@ -52,30 +62,62 @@ var controller = function (model, server) {
         },
         random: function (callback, failure) {
             countdownAction({url: "/random",
-                data: {},
-                method: "GET",
-                success: callback,
-                failure: failure
-            });
+                             data: {},
+                             method: "GET",
+                             success: callback,
+                             failure: failure
+                            });
         },
-        nextMonth: function (callback, failure) {
-            countdownAction("/month", {}, "GET", callback, failure);
+        nextDay: function (callback, failure) {
+            lastAction = {url:"/day", data:{}, method:"GET", success:callback, failure:failure};
+            countdownAction(lastAction);
         },
-        nextWeekend: function (callback, failure) {
-            countdownAction("/weekend", {}, "GET", callback, failure);
-        },
-        nextYear: function (callback, failure) {
-            countdownAction("/year", {}, "GET", callback, failure);
-        },
-        search: function(data, callback, failure) {
-            countdownAction("/countdowns", data, "GET", callback, failure);
-        },
-        countdown: function (id, callback, failure) {
-            countdownAction("?" + id, {}, "GET", callback, failure, true);
-        },
+	    nextWeek: function (callback, failure) {
+	        lastAction = {url:"/week", data:{}, method:"GET", success:callback, failure:failure};
+            countdownAction(lastAction);
+	    },
+	    nextMonth: function (callback, failure) {
+	        lastAction = {url:"/month", data:{}, method: "GET", success: callback, failure:failure};
+            countdownAction(lastAction);
+	    },
+	    nextWeekend: function (callback, failure) {
+	        lastAction = {url: "/weekend", data:{}, method:"GET", success: callback, failure: failure};
+            countdownAction(lastAction);
+	    },
+	    nextYear: function (callback, failure) {
+	        lastAction = {url : "/year", data: {}, method: "GET", success: callback, failure: failure};
+            countdownAction(lastAction);
+	    },
+	    search: function(data) {
+	        lastAction = {url: "/countdowns", data: data, method: "GET"};
+            countdownAction(lastAction);
+	    },
+	    countdown: function (id, callback, failure) {
+	        countdownAction({url:"?" + id, data: {}, method:"GET", success: callback, failure: failure, ogp: true});
+	    },
+	    
         newCountdown:  function (data, callback, failure) {
             // contentType: "application/json",
-            countdownAction("/insert", {countdown:data}, "POST", callback, failure);
+            var action = {url: "/insert", data: data, method: "POST", success: callback, failure: failure};
+            countdownAction(action);
+        },
+        next: function (data, callback, failure) {
+            var last = parseLast();
+            if(lastAction !== undefined) {
+                countdownAction(lastAction); //need to change the last and limit potentially
+            }
+            else {
+                lastAction = {url: window.location.pathname,
+                              data: data,
+                              method: "GET",
+                              success: callback,
+                              failure: failure};
+                countdownAction(lastAction);
+                              
+            }
+        },
+        prev: function(data, callback, failure) {
+            alert('Going back');
         },
         messages: model.messages,
         countdownAction: countdownAction

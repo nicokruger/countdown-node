@@ -82,6 +82,7 @@ createPage(function (window) {
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : fs.readFileSync("./header.html").toString(),
         "content" : fs.readFileSync("./countdowns.html").toString(),
+        "pagination" : fs.readFileSync("./pagination.html").toString(),
         "footer" : fs.readFileSync("./footer.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js"
@@ -94,6 +95,7 @@ createPage(function (window) {
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : fs.readFileSync("./header.html").toString(),
         "content" : fs.readFileSync("./add.html").toString(),
+        "pagination" : '<div></div>',
         "footer" : fs.readFileSync("./footer.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs" : "/public/add.js"
@@ -106,6 +108,7 @@ createPage(function (window) {
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : "",
         "content" : fs.readFileSync("./countdowns.html").toString(),
+        "pagination" : '<div></div>',
         "footer" : '<footer>Brought to you by <a href="http://www.whenis.co.za">When Is</a></footer>',
         "css" : "/public/whenis-headless.css",
         "indexjs" : "/public/index.headless.js"
@@ -118,6 +121,7 @@ createPage(function (window) {
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : fs.readFileSync("./header.html").toString(),
         "content" : fs.readFileSync("./503.html").toString(),
+        "pagination" : '<div></div>',
         "footer" : fs.readFileSync("./footer-contact.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js"
@@ -130,6 +134,7 @@ createPage(function (window) {
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : "",
         "content" : fs.readFileSync("./404.html").toString(),
+        "pagination" : '<div></div>',
         "footer" : fs.readFileSync("./footer-contact.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js"
