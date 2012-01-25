@@ -71,6 +71,10 @@ CountdownProvider.prototype.todayPlus = function(num) {
     return {'eventDate': { '$gte' : new Date(), '$lt': end}};
 };
 
+CountdownProvider.prototype.future = function(pagination, callback, failure) {
+    this.paginatedQuery( {'eventDate' : { '$gte' : new Date() }}, this.sortBy, pagination, callback, failure );
+};
+
 CountdownProvider.prototype.random = function(callback, failure) {
     var getRandom = function(min, max) {
         return Math.floor( Math.random() * (max - min + 1)) + min;
@@ -121,7 +125,7 @@ CountdownProvider.prototype.insert = function(countdown, callback, failure) {
 };
         
 
-CountdownProvider.prototype.paginatedQuery = function(query, sortBy, pagination, callback, failure){
+CountdownProvider.prototype.paginatedQuery = function(query, sortBy, pagination, callback, failure) {
     this.mongoQuery(function(collection){
 
         //modify the query to be greater than the last name and millis
@@ -143,7 +147,7 @@ CountdownProvider.prototype.paginatedQuery = function(query, sortBy, pagination,
             query.eventDate = {$gt : pagination.last.eventDate };
         }
         
-        //console.log("QUERY : "+ JSON.stringify(query));
+        console.log("QUERY : "+ JSON.stringify(query));
         var cursor = collection.find(query);
         return cursor.sort(sortBy).limit(pagination.limit);
     }, callback, failure);
@@ -161,7 +165,7 @@ CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
                     failure(error);
                 }
                 else {
-                    //console.log("Got results "+results.length);
+                    console.log("Got results "+results.length);
                     var i;
                     for (i = 0; i < results.length; i++){
                         //console.log(results[i].name);

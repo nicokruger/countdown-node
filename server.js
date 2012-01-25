@@ -68,7 +68,6 @@ var parseTags = function(tagsString) {
 
 var countdownFromReq = function(req){
     var countdown = {};
-    console.log("Req: " + JSON.stringify(req.body));
 	countdown.tags = parseTags(req.body.tags);
 	countdown.name = req.query.name === undefined ? 'no-name' : req.body.name;
 	countdown.eventDate = new Date(req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10));
@@ -79,7 +78,7 @@ var getPaginationParams = function(req){
     var limit = req.query.limit === undefined? defaultLimit : req.query.limit;
     var last = defaultLast;
     if(req.query.eventDate !== undefined && req.query.name !== undefined){
-        last = {name : req.query.name, eventDate: req.query.eventDate };
+        last = {name : req.query.name, eventDate: new Date( parseInt(req.query.eventDate, 10)) };
     }
     return {'last' : last, 'limit' : limit};
 };
@@ -103,7 +102,7 @@ router.configure( function(req,res) {
 
 router.get("/", function (req,res) {
 	client.countdowns(req, res, function(r,w) {
-		countdownProvider.week(function(data){
+		countdownProvider.future(function(data){
 			putMongoCountdowns(data, r, w);
         });
     }, underscore.bind(failure, undefined, req, res));
@@ -116,38 +115,23 @@ router.get("/add", function (req, res) {
     }, underscore.bind(failure, undefined, req, res));
 });
 
-router.get("/day", function (req,res) {
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.day(function(data){
-			putMongoCountdowns(data, r, w);
-        });
-    }, underscore.bind(failure, undefined, req, res));
-});
-
-router.get("/week", function (req,res) {
-
+router.get("/future", function (req,res) {
     var pagination = getPaginationParams(req);
-    console.log( JSON.stringify(pagination));
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.week(pagination, function(data){
-			putMongoCountdowns(data, r, w);
-        });
-    }, underscore.bind(failure, undefined, req, res));
+
+    if(req.is('application/json')){
+	    countdownProvider.future(pagination, function(data){
+            res.json(data);
+        }, underscore.bind(failure, undefined, req, res));
+    }
+    else {
+        client.countdowns(req, res, function(r,w) {
+		    countdownProvider.future(pagination, function(data){
+			    putMongoCountdowns(data, r, w);
+		    });
+	    }, underscore.bind(failure, undefined, req, res));
+    }
 });
-router.get("/month", function (req,res) {
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.month(getPaginationParams(req), function(data){
-			putMongoCountdowns(data, r, w);
-		});
-	}, underscore.bind(failure, undefined, req, res));
-});
-router.get("/year", function (req,res) {
-	client.countdowns(req, res, function (r, w) {
-		countdownProvider.year (getPaginationParams(req), function(data) {
-			putMongoCountdowns(data, r, w);
-		});
-	}, underscore.bind(failure, undefined, req, res));
-});
+
 router.get("/random", function (req,res) {
 	client.countdowns(req, res, function (r, w) {
 		countdownProvider.random ( function(data) {
@@ -170,8 +154,8 @@ router.get("/countdowns", function (req, res) {
         }, underscore.bind(failure, undefined, req, res));
 	}
 	else {
-        r.writeHead(400, {"Content-type":"text/html"});
-        r.end("Not valid");
+        req.writeHead(400, {"Content-type":"text/html"});
+        req.end("Not valid");
 	}
 });
 

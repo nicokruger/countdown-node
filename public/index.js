@@ -15,7 +15,7 @@ $(function () {
   });
 
   var m = model($("#countdownlist"), undefined, timo.normalCounterType);
-  var c = controller(m, "http://" + window.location.hostname);
+  var c = controller(m, "http://" + window.location.hostname  +":" + window.location.port);
   var action = actions(c);
 
   $("#random").click(action.random);

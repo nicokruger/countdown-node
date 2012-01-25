@@ -9,16 +9,38 @@ var controller = function (model, server) {
     var parseLast = function(){
         var lastName = $('#countdownlist li:last-child > .countdown-name > a').text();
         var lastMillis = $('#countdownlist li:last-child > .countdown-counter').attr('data-eventdate');
-        console.log(lastName + " " + lastMillis);
-        return {name: lastName, eventDate: new Date(parseInt(lastMillis, 10))};
+       // console.log(lastName + " " + lastMillis);
+        return {name: lastName, eventDate: parseInt(lastMillis, 10)};
     };
+    // var parseFirst = function(){
+    //     var firstName = $('#countdownlist li:first-child > .countdown-name > a').text();
+    //     var firstMillis = $('#countdownlist li:first-child > .countdown-counter').attr('data-eventdate');
+    //     console.log(firstName + " " + firstMillis);
+    //     return {name: firstName, eventDate: parseInt(firstMillis, 10)};
+    // };
+
+    // var getPath = function(q){
+    //     return q.substring(0, q.indexOf('?'));
+    // };
     
+    //built-in way to do this?
+    var createParamString = function(params){
+        if(params === undefined) return "";
+        var ps = "?",
+            f;       
+        for (f in params){
+            ps += (f + "=" + encodeURIComponent(params[f]) + "&");
+        }
+       // console.log("PARAM STRNIG: "+ ps);
+        return ps;
+    };
+
     var lastAction = undefined;
 
     var countdownAction = function (config)  {
-
+        console.log("Doing countdownAction " + server + config.url );
         $.ajax({
-            url: server + config.url,
+            url: server + config.url + createParamString(config.params),
             //url: "http://localhost:55555/filesystem/index.html",
             data: config.data,
             type: config.method,
@@ -48,6 +70,7 @@ var controller = function (model, server) {
             },
             error: function (e) {
                 model.messages.error("An error occurred. Please try again. If the problem persists, something is broken. We will fix it shortly.");
+                console.error(e);
                 if (typeof(config.failure) !== "undefined") {
                     config.failure(e);
                 }
@@ -101,23 +124,23 @@ var controller = function (model, server) {
             var action = {url: "/insert", data: data, method: "POST", success: callback, failure: failure};
             countdownAction(action);
         },
-        next: function (data, callback, failure) {
+        next: function (callback, failure) {
             var last = parseLast();
             if(lastAction !== undefined) {
-                countdownAction(lastAction); //need to change the last and limit potentially
+                lastAction.params = last;      
             }
             else {
+                console.log("PATH NAME IS "+ window.location.pathname);
                 lastAction = {url: window.location.pathname,
-                              data: data,
-                              method: "GET",
-                              success: callback,
-                              failure: failure};
-                countdownAction(lastAction);
-                              
+                              data: {},
+                              params: last,
+                              method: "GET"};
             }
+            countdownAction(lastAction);
+
         },
-        prev: function(data, callback, failure) {
-            alert('Going back');
+        prev: function(callback, failure) {
+            //var first = parseFirst();
         },
         messages: model.messages,
         countdownAction: countdownAction
