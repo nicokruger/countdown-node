@@ -87,6 +87,7 @@ CountdownProvider.prototype.random = function(callback, failure) {
 };
 
 CountdownProvider.prototype.search = function(params, pagination, callback, failure) {
+    console.log("Searching in prov");
     var nameRegex = '.*' + params.name.split(' ').join('.*') + '.*';
     var query = {'name': { '$regex' : nameRegex, '$options' : 'i' } };
     if (params.tags.length > 0){
@@ -108,7 +109,7 @@ CountdownProvider.prototype.searchTags = function(startsWith, callback, failure)
 
 CountdownProvider.prototype.upsert = function(countdown, callback, failure) {
    this.collection(function (error, coll) {
-        if (error) failure(error);
+       if (error) failure(error);
        coll.update({name : countdown.name}, countdown, {upsert: true}, function(error, docs) {
            callback(docs);
         });
@@ -128,28 +129,9 @@ CountdownProvider.prototype.insert = function(countdown, callback, failure) {
 CountdownProvider.prototype.paginatedQuery = function(query, sortBy, pagination, callback, failure) {
     this.mongoQuery(function(collection){
 
-        //modify the query to be greater than the last name and millis
-        var oldName = query.name,
-            newName = {name: {$gt : pagination.last.name}};
-
-        //if the query already had a name constraint we have to $and them
-        query.name = newName.name;
-        if(oldName !== undefined) {
-            query.name = { $and : [ oldName, newName ]};
-        }
-        
-        //if query already had a start ( $gt on eventdate) just swap it
-        if(query.eventDate !== undefined){
-            query.eventDate['$gt'] = pagination.last.eventDate;  //might have an $lt we do not want to lose
-            delete query.eventDate['$gte'];
-        }
-        else {
-            query.eventDate = {$gt : pagination.last.eventDate };
-        }
-        
-        console.log("QUERY : "+ JSON.stringify(query));
+        console.log("QUERY : "+ JSON.stringify(query) + " skipping: "+ pagination.skip + " limit: " + pagination.limit);
         var cursor = collection.find(query);
-        return cursor.sort(sortBy).limit(pagination.limit);
+        return cursor.sort(sortBy).skip(pagination.skip).limit(pagination.limit);
     }, callback, failure);
 };
 

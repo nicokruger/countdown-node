@@ -2,26 +2,11 @@
 var controller = function (model, server) {
     
     server = server === undefined ? "" : server;
-
+    var skipAmount = 4;
     var isArray = function(value) {
         return Object.prototype.toString.apply(value) == '[object Array]';
     };
-    var parseLast = function(){
-        var lastName = $('#countdownlist li:last-child > .countdown-name > a').text();
-        var lastMillis = $('#countdownlist li:last-child > .countdown-counter').attr('data-eventdate');
-       // console.log(lastName + " " + lastMillis);
-        return {name: lastName, eventDate: parseInt(lastMillis, 10)};
-    };
-    // var parseFirst = function(){
-    //     var firstName = $('#countdownlist li:first-child > .countdown-name > a').text();
-    //     var firstMillis = $('#countdownlist li:first-child > .countdown-counter').attr('data-eventdate');
-    //     console.log(firstName + " " + firstMillis);
-    //     return {name: firstName, eventDate: parseInt(firstMillis, 10)};
-    // };
 
-    // var getPath = function(q){
-    //     return q.substring(0, q.indexOf('?'));
-    // };
     
     //built-in way to do this?
     var createParamString = function(params){
@@ -70,7 +55,7 @@ var controller = function (model, server) {
             },
             error: function (e) {
                 model.messages.error("An error occurred. Please try again. If the problem persists, something is broken. We will fix it shortly.");
-                console.error(e);
+                console.log("ERRROOOR"+e);
                 if (typeof(config.failure) !== "undefined") {
                     config.failure(e);
                 }
@@ -125,19 +110,23 @@ var controller = function (model, server) {
             countdownAction(action);
         },
         next: function (callback, failure) {
-            var last = parseLast();
+            var getNewUrl = function(path){
+                if(path == "/") return "/future/" + skipAmount;
+                var parts = path.split('/').splice(1),
+                    pathname = parts[0],
+                    skip = (parts[1] === undefined ? 0 : parseInt(parts[1], 10)) + skipAmount;
+                return "/" + pathname + "/" + skip;
+            };
+
             if(lastAction !== undefined) {
-                lastAction.params = last;      
+                lastAction.url = getNewUrl(lastAction.url);
             }
-            else {
-                console.log("PATH NAME IS "+ window.location.pathname);
-                lastAction = {url: window.location.pathname,
+            if(lastAction === undefined) {
+                lastAction = {url: getNewUrl(window.location.pathname),
                               data: {},
-                              params: last,
                               method: "GET"};
             }
             countdownAction(lastAction);
-
         },
         prev: function(callback, failure) {
             //var first = parseFirst();
