@@ -6,7 +6,13 @@ var controller = function (model, server) {
     var isArray = function(value) {
         return Object.prototype.toString.apply(value) == '[object Array]';
     };
-
+    var getLastParts = function(path){
+        if(path == "/") return {path: "future", skip: 0 };
+        var parts = path.split('/').splice(1),
+            pathname = parts[0],
+            skip = (parts[1] === undefined ? 0 : parseInt(parts[1], 10));
+        return {path: pathname, skip: skip};
+    };
     
     //built-in way to do this?
     var createParamString = function(params){
@@ -20,6 +26,17 @@ var controller = function (model, server) {
         return ps;
     };
 
+    var pagination = function( urlCreator ) {
+        if(lastAction !== undefined) {
+                lastAction.url = urlCreator( getLastParts(lastAction.url));
+            }
+            if(lastAction === undefined) {
+                lastAction = {url: urlCreator( getLastParts(window.location.pathname)),
+                              data: {},
+                              method: "GET"};
+            }
+            countdownAction(lastAction);
+    };
     var lastAction = undefined;
 
     var countdownAction = function (config)  {
@@ -110,26 +127,15 @@ var controller = function (model, server) {
             countdownAction(action);
         },
         next: function (callback, failure) {
-            var getNewUrl = function(path){
-                if(path == "/") return "/future/" + skipAmount;
-                var parts = path.split('/').splice(1),
-                    pathname = parts[0],
-                    skip = (parts[1] === undefined ? 0 : parseInt(parts[1], 10)) + skipAmount;
-                return "/" + pathname + "/" + skip;
-            };
-
-            if(lastAction !== undefined) {
-                lastAction.url = getNewUrl(lastAction.url);
-            }
-            if(lastAction === undefined) {
-                lastAction = {url: getNewUrl(window.location.pathname),
-                              data: {},
-                              method: "GET"};
-            }
-            countdownAction(lastAction);
+            var getNewUrl = function(parts) { return "/" + parts.path + "/" + ( parts.skip + skipAmount ); };
+            pagination(getNewUrl);
         },
         prev: function(callback, failure) {
-            //var first = parseFirst();
+            var getNewUrl = function(parts) { 
+                var skip = parts.skip === 0? 0 : parts.skip - skipAmount;
+                return "/" + parts.path + "/" + skip; 
+            };
+            pagination(getNewUrl);
         },
         messages: model.messages,
         countdownAction: countdownAction
