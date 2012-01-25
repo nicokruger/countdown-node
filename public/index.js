@@ -14,7 +14,7 @@ $(function () {
     $(eventObject.target).find(".social-link").css("display","inline-block");
   });
 
-  var m = model($("#countdownlist"), undefined, timo.normalCounterType);
+  var m = model($("#countdownlist"), undefined, {counterType: timo.normalCounterType});
   var c = controller(m, "http://" + window.location.hostname);
   var action = actions(c);
 

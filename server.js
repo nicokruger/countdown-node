@@ -55,19 +55,12 @@ var putMongoCountdowns = function (data, resp, window){
     resp.end(window.document.innerHTML);
 };
 
-var parseTags = function(tagsString) {
-    if(tagsString !== undefined) {
-        return tagsString.split(',');
-    }
-    else return [];
-};
-
 var countdownFromReq = function(req){
     var countdown = {};
     console.log("Req: " + JSON.stringify(req.body));
-	countdown.tags = parseTags(req.body.tags);
-	countdown.name = req.query.name === undefined ? 'no-name' : req.body.name;
-	countdown.eventDate = new Date(req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10));
+	countdown.tags = req.body.tags;
+	countdown.name = req.body.name === undefined ? 'no-name' : req.body.name;
+	countdown.eventDate = req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10);
     return countdown;
 };
 
@@ -82,6 +75,7 @@ var countdownFromReq = function(req){
 */
 router.configure( function(req,res) {
 	router.use('/public', express.static('./public')); // static is a reserved word
+    router.use(express.bodyParser());
 	router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 

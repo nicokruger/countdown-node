@@ -1,5 +1,9 @@
 $(function () {
-    var m = model($("#countdownlist"), undefined, timo.normalCounterType);
+    var m = model($("#countdownlist"), undefined, {
+        counterType: timo.normalCounterType,
+        socialLinks: false,
+        counterLink: false
+    });
     var c = controller(m, "http://" + window.location.hostname +":" + window.location.port);
     var action = actions(c);
     var initialDatetime = moment().add("hours", 3);
@@ -16,7 +20,7 @@ $(function () {
         if (tz === "UTC") {
             ed = moment($("#countdownDatetime").val() + " 00:00", "YYYY-MM-DD Z");
         } else if (tz === "Local timezone") {
-            // do nothing - should be local already?
+            // do nothing - should be local already
         }
         var data = {
             _id: "asdfasfasdf",

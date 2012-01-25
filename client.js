@@ -13,7 +13,7 @@ var loadCompleted = function (window) {
     var model = window.model;
     var controller = window.controller;
     var timo = window.timo;
-    var m = model($("#countdownlist"), $("head"), timo.noCounterType);
+    var m = model($("#countdownlist"), $("head"), {counterType: timo.noCounterType});
     var c = controller(m, "http://localhost:8080");
 
     window.m = m;

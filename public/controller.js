@@ -10,12 +10,13 @@ var controller = function (model, server) {
         $.ajax({
             url: server + config.url,
             //url: "http://localhost:55555/filesystem/index.html",
+            //data: JSON.stringify(config.data),
             data: config.data,
             type: config.method,
             dataType: "json",
-            beforeSend: function( xhr ) {
+            /*beforeSend: function( xhr ) {
                 xhr.setRequestHeader('Content-Type', 'application/json');
-            },
+            },*/
             success: function (o) {
                 model.clear();
                 if (o.hasOwnProperty("error")) {
@@ -37,6 +38,7 @@ var controller = function (model, server) {
                 }
             },
             error: function (e) {
+                model.messages.clear();
                 model.messages.error("An error occurred. Please try again. If the problem persists, something is broken. We will fix it shortly.");
                 if (typeof(config.failure) !== "undefined") {
                     config.failure(e);
@@ -75,7 +77,13 @@ var controller = function (model, server) {
         },
         newCountdown:  function (data, callback, failure) {
             // contentType: "application/json",
-            countdownAction("/insert", {countdown:data}, "POST", callback, failure);
+            countdownAction({
+                url: "/insert",
+                data:data,
+                method: "POST",
+                success: callback,
+                failure: failure
+            });
         },
         messages: model.messages,
         countdownAction: countdownAction

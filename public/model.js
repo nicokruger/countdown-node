@@ -25,7 +25,15 @@ var logger = function (where) {
         }
     };
 };
-var model = function (countdownHolder, head, timoCounterType) {
+var defaultModelOptions = {
+    counterType: timo.normalCounterType,
+    socialLinks: true,
+    counterLink: true
+};
+
+var model = function (countdownHolder, head, options) {
+    options = _.extend(defaultModelOptions, options);
+    var timoCounterType = options.counterType;
     var messages = logger($("<div class=\"messages\"></div>").insertBefore(countdownHolder));
     var counters;
     var curTimoType = 0;
@@ -98,7 +106,7 @@ var model = function (countdownHolder, head, timoCounterType) {
                 this.countdowns.splice(where, 0, c);
             }
             // Name of countdown
-            var countdownName = $('<span class="countdown-name"><a href="' + c_id + '">' + c.name + '</a></span>').appendTo($(outside));
+            var countdownName = $('<span class="countdown-name"><a href="' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></span>').appendTo($(outside));
             
             // Tags
             var tags = $('<span class="countdown-tags"></span>').appendTo(countdownName);
@@ -106,8 +114,11 @@ var model = function (countdownHolder, head, timoCounterType) {
                 tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '">' + tag + '</a></span>');
             });
            
+            var social = $('<span class="countdown-social"></span>').appendTo($(outside));
             // Social links
-            var social = $('<span class="countdown-social">' + this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id) + '</span>').appendTo($(outside));
+            if (options.socialLinks) {
+                social.append(this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id));
+            }
             // Countdown itself
             var cd = $("<span class=\"countdown-counter\" id=\"" + c.url + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
 
