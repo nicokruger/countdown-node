@@ -53,7 +53,7 @@ var failure = function (req, resp, error) {
 
 };
 
-var putMongoCountdowns = function (data, resp, window){
+var createDom = function (data, resp, window){
     window.c.clear();
     window.m.putCountdowns(data);
     resp.writeHead(200, {"Content-type":"text/html"});
@@ -90,24 +90,15 @@ var defaultRoute = function(req, res){
         }, underscore.bind(failure, undefined, req, res));
     }
     else {
-        client.countdowns(req, res, function(r,w) {
+        client.paginated(req, res, function(r,w) {
             countdownProvider.future(pagination, function(data){
-                putMongoCountdowns(data, r, w);
+                createDom(data, r, w);
             });
         }, underscore.bind(failure, undefined, req, res));
     }
 };
 
 
-/**
-    "r`/tags/(.+)`": function (req, res, matches) {
-        client.countdowns(req, res, putCountdowns(function (c) {
-            return function (callback) {
-                c.search({"tags" : matches[0]}, callback);
-            };
-        }));
-    },
-*/
 router.configure( function(req,res) {
     router.use('/public', express.static('./public')); // static is a reserved word
     router.use(express.bodyParser());
@@ -132,9 +123,9 @@ router.get("/random/:something?", function (req,res) {
         }, underscore.bind(failure, undefined, req, res));
     }
     else {
-        client.countdowns(req, res, function (r, w) {
+        client.nonpaginated(req, res, function (r, w) {
             countdownProvider.random ( function(data) {
-                putMongoCountdowns(data, r, w);
+                createDom(data, r, w);
             });
         }, underscore.bind(failure, undefined, req, res));
     }
@@ -152,9 +143,9 @@ router.get("/tags/:tag/:skip?", function (req, res) {
 
     console.log("JSON: " + JSON.stringify(pagination));
     if(req.accepts('html')){
-        client.countdowns(req, res, function (r, w) {
+        client.paginated(req, res, function (r, w) {
             countdownProvider.search(searchParams, pagination, function(data){
-                putMongoCountdowns(data, r, w);
+                createDom(data, r, w);
             });
         }, underscore.bind(failure, undefined, req, res));
     }
@@ -224,15 +215,15 @@ router.get('/:id', function(req, res) {
 
     // determine which client to use - normal or headless by looking at the headless query parameter
     if (typeof(query) === "undefined" || query["embedded"] !== "true") {
-        client.countdowns(req, res, function(r,w) {
+        client.nonpaginated(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                putMongoCountdowns(data, r, w);
+                createDom(data, r, w);
             }, underscore.bind(failure, undefined, req, res));
         });
     } else {
         client.headless(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                putMongoCountdowns(data, r, w);
+                createDom(data, r, w);
             }, underscore.bind(failure, undefined, req, res));
         });
     }

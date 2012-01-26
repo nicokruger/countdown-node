@@ -78,7 +78,7 @@ $(function () {
     
     $("#countdownDatetime").datepicker();
     var h = $("#countdownTime").hours();
-
+    preview();
     $("#addPublic").click(function (e) {
         e.preventDefault();
 

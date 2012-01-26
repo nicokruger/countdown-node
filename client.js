@@ -78,7 +78,7 @@ var scripts = [
 
 // Create the normal DOM - for viewing countdowns
 createPage(function (window) {
-    exports.countdownClientWindow = loadCompleted(window);
+    exports.paginatedClientWindow = loadCompleted(window);
 }, underscore.template(fs.readFileSync("./index.html").toString(),
     {   "header" : fs.readFileSync("./header.html").toString(),
         "content" : fs.readFileSync("./countdowns.html").toString(),
@@ -89,6 +89,17 @@ createPage(function (window) {
     }
 ), scripts);
 
+createPage(function (window) {
+    exports.nonpaginatedClientWindow = loadCompleted(window);
+}, underscore.template(fs.readFileSync("./index.html").toString(),
+    {   "header" : fs.readFileSync("./header.html").toString(),
+        "content" : fs.readFileSync("./countdowns.html").toString(),
+        "pagination" : '',
+        "footer" : fs.readFileSync("./footer.html").toString(),
+        "css" : "/public/whenis.css",
+        "indexjs": "/public/index.js"
+    }
+), scripts);
 // Create the DOM for the addpage
 createPage(function (window) {
     exports.addWindow = loadCompleted(window);
@@ -141,8 +152,12 @@ createPage(function (window) {
     }
 ), scripts);
 
-exports.countdowns = function (req, resp, sendClient) {
-    sendClient(resp, this.countdownClientWindow);
+exports.paginated = function (req, resp, sendClient) {
+    sendClient(resp, this.paginatedClientWindow);
+};
+
+exports.nonpaginated = function (req, resp, sendClient) {
+    sendClient(resp, this.nonpaginatedClientWindow);
 };
 
 exports.add = function (req, resp, sendClient) {
