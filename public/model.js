@@ -114,7 +114,7 @@ var model = function (countdownHolder, head, options) {
             // Tags
             var tags = $('<span class="countdown-tags"></span>').appendTo(countdownName);
             _(c.tags).each(function (tag) {
-                tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '">' + tag + '</a></span>');
+                tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '/">' + tag + '</a></span>');
             });
            
             var social = $('<span class="countdown-social"></span>').appendTo($(outside));

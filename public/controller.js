@@ -6,12 +6,23 @@ var controller = function (model, server) {
     var isArray = function(value) {
         return Object.prototype.toString.apply(value) == '[object Array]';
     };
+    // TODO: FIX this code! We SERIOUSLY need to figure out JS unit testing.
+    // I don't know how to test an inner function, inside a modle (like this)
+    // I tested with the node command line... but that's not good enough.
+    // This is crappy code - I apologise, but it's late and this needs to work :(
     var getLastParts = function(path){
         if(path == "/") return {path: "future", skip: 0 };
-        var parts = path.split('/').splice(1),
-            pathname = parts[0],
-            skip = (parts[1] === undefined ? 0 : parseInt(parts[1], 10));
-        return {path: pathname, skip: skip};
+        var parts = path.split('/').splice(1);
+        if (parts.length == 1) {
+            return {
+                path: parts[0],
+                skip: 0
+            };
+        } else {
+            var pathname = parts.slice(0,parts.length-1).join("/");
+            var skip = (parts[parts.length-1] === "" ? 0 : parseInt(parts[parts.length-1], 10));
+            return {path: pathname, skip: skip};
+        }
     };
     
     //built-in way to do this?
@@ -38,6 +49,23 @@ var controller = function (model, server) {
                           method: "GET"};
         }
         countdownAction(lastAction);
+    };
+
+    // This is for bots, to give the next/prev buttons an actual href
+    var makePagination = function (urlCreator) {
+        if(typeof(lastAction) !== "undefined") {
+            lastAction.url = urlCreator( getLastParts(lastAction.url));
+        } else {
+            lastAction = {url: urlCreator( getLastParts(window.location.pathname)),
+                          data: {},
+                          success: addMultipleCountdowns(undefined, undefined),
+                          failure: function (error) {
+                                model.messages.error("Pagination error: " + error);
+                          },
+                          method: "GET"};
+        }
+
+        return lastAction.url;
     };
     var lastAction;
 
@@ -136,18 +164,31 @@ var controller = function (model, server) {
                 failure: failure
             });
         },
-        next: function (callback, failure) {
+        next: function () {
             var getNewUrl = function(parts) {
                 return "/" + parts.path + "/" + ( parts.skip + skipAmount );
             };
             pagination(getNewUrl);
         },
-        prev: function(callback, failure) {
+        prev: function() {
             var getNewUrl = function(parts) {
                 var skip = parts.skip === 0? 0 : parts.skip - skipAmount;
                 return "/" + parts.path + "/" + skip;
             };
             pagination(getNewUrl);
+        },
+        makePagination: function () {
+            var getNextUrl = function(parts) {
+                return "/" + parts.path + "/" + ( parts.skip + skipAmount );
+            };
+            var getPrevUrl = function (parts) {
+                return "/" + parts.path + "/" + ( parts.skip - skipAmount );
+            };
+            var nextUrl = makePagination(getNextUrl);
+            var prevUrl = makePagination(getPrevUrl);
+
+            $("#next_link").attr("href", nextUrl);
+            $("#prev_link").attr("href", prevUrl);
         },
         messages: model.messages
     };
