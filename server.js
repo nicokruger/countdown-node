@@ -151,7 +151,7 @@ router.get("/tags/:tag/:skip?", function (req, res) {
     if(req.accepts('html')){
         client.paginated(req, res, function (r, w) {
             countdownProvider.search(searchParams, pagination, function(data){
-                createDom(data, r, w);
+                createDom(data, r, w, "When Is - #" + req.params.tag);
             });
         }, underscore.bind(failure, undefined, req, res));
     }
