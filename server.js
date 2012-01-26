@@ -184,7 +184,7 @@ router.get("/countdowns/:skip?", function (req, res) {
     params.end = req.query.end === undefined ? undefined : new Date( parseInt(req.query.end, 10));
     if(req.accepts('json')){
         countdownProvider.search(params, pagination, function(data){
-            res.json(data);
+            res.json({countdowns:data});
         }, underscore.bind(failure, undefined, req, res));
     }
     else {

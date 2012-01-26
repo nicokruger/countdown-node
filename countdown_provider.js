@@ -50,29 +50,8 @@ CountdownProvider.prototype.retrieveById = function(idString, callback, failure)
     }
 };
 
-CountdownProvider.prototype.day = function (pagination, callback, failure) {
-    this.paginatedQuery(this.todayPlus(1*24*60*60*1000), this.sortBy, pagination, callback, failure);
-};
-
-CountdownProvider.prototype.week = function (pagination, callback, failure) {
-    this.paginatedQuery(this.todayPlus(7*24*60*60*1000), this.sortBy, pagination, callback, failure);
-};
-
-CountdownProvider.prototype.month = function (pagination, callback, failure) {
-    this.paginatedQuery(this.todayPlus(30*24*60*60*1000), this.sortBy, pagination, callback, failure);
-};
-
-CountdownProvider.prototype.year = function (pagination, callback, failure) {
-    this.paginatedQuery(this.todayPlus(365*24*60*60*1000), this.sortBy, pagination, callback, failure);
-};
-
-CountdownProvider.prototype.todayPlus = function(num) {
-    var end = new Date(new Date().getTime() + num);
-    return {'eventDate': { '$gte' : new Date(), '$lt': end}};
-};
-
 CountdownProvider.prototype.future = function(pagination, callback, failure) {
-    this.paginatedQuery( {'eventDate' : { '$gte' : new Date() }}, this.sortBy, pagination, callback, failure );
+    this.paginatedQuery( {'eventDate' : { '$gte' : new Date() }, 'isPrivate': {'$ne' : 'true'} }, this.sortBy, pagination, callback, failure );
 };
 
 CountdownProvider.prototype.random = function(callback, failure) {
@@ -87,7 +66,6 @@ CountdownProvider.prototype.random = function(callback, failure) {
 };
 
 CountdownProvider.prototype.search = function(params, pagination, callback, failure) {
-    console.log("Searching in prov");
     var nameRegex = '.*' + params.name.split(' ').join('.*') + '.*';
     var query = {'name': { '$regex' : nameRegex, '$options' : 'i' } };
     if (params.tags.length > 0){
@@ -97,6 +75,7 @@ CountdownProvider.prototype.search = function(params, pagination, callback, fail
     if(params.end !== undefined){
         query['eventDate']['$lt'] = params.end;
     }
+    query['isPrivate'] = { '$ne' : 'true' };
     this.paginatedQuery(query, this.sortBy, pagination, callback, failure);
 };
 
@@ -158,11 +137,19 @@ CountdownProvider.prototype.sortBy = { eventDate: 1, name: -1};
 CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
     this.collection(function(error, coll){
         if(error) {
-            failure(error);
+            if (typeof(failure) !== "undefined") {
+                failure(error);
+            } else {
+                console.log("[no error handler]: " + error);
+            }
         } else {
             query(coll).toArray(function(error, results) {
                 if(error){
-                    failure(error);
+                    if (typeof(failure) !== "undefined") {
+                        failure(error);
+                    } else {
+                        console.log("[no error handler]: " + error);
+                    }
                 }
                 else {
                     console.log("Got results "+results.length);
