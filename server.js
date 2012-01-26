@@ -140,6 +140,30 @@ router.get("/random/:something?", function (req,res) {
     }
 });
  
+router.get("/tags/:tag/:skip?", function (req, res) {
+    var skip = isNaN(parseInt(req.params.skip, 10)) ? 0 : parseInt(req.params.skip, 10),
+        pagination = {limit: defaultLimit, skip: skip};
+    var searchParams = {
+        name: '',
+        tags: [req.params.tag],
+        start: new Date(),
+        end: undefined
+    };
+
+    console.log("JSON: " + JSON.stringify(pagination));
+    if(req.accepts('html')){
+        client.countdowns(req, res, function (r, w) {
+            countdownProvider.search(searchParams, pagination, function(data){
+                putMongoCountdowns(data, r, w);
+            });
+        }, underscore.bind(failure, undefined, req, res));
+    }
+    else {
+        req.writeHead(400, {"Content-type":"text/html"});
+        req.end("Not valid");
+    }
+
+});
 
 router.get("/countdowns/:skip?", function (req, res) {
     var parseTags = function(tagsString) {
