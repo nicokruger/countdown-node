@@ -155,16 +155,17 @@ router.get("/tags/:tag/:skip?", function (req, res) {
     };
 
     console.log("JSON: " + JSON.stringify(pagination));
-    if(req.accepts('html')){
+    if(req.accepts('json')){
+        countdownProvider.search(searchParams, pagination, function(data){
+            res.json({countdowns:data});
+        }, underscore.bind(failure, undefined, req, res));
+    }
+    else {
         client.paginated(req, res, function (r, w) {
             countdownProvider.search(searchParams, pagination, function(data){
                 createDom(data, r, w, "When Is - #" + req.params.tag);
             });
         }, underscore.bind(failure, undefined, req, res));
-    }
-    else {
-        req.writeHead(400, {"Content-type":"text/html"});
-        req.end("Not valid");
     }
 
 });
