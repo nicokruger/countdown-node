@@ -26,15 +26,18 @@ var controller = function (model, server) {
     };
 
     var pagination = function( urlCreator ) {
-        if(lastAction !== undefined) {
-                lastAction.url = urlCreator( getLastParts(lastAction.url));
-            }
-            if(lastAction === undefined) {
-                lastAction = {url: urlCreator( getLastParts(window.location.pathname)),
-                              data: {},
-                              method: "GET"};
-            }
-            countdownAction(lastAction);
+        if(typeof(lastAction) !== "undefined") {
+            lastAction.url = urlCreator( getLastParts(lastAction.url));
+        } else {
+            lastAction = {url: urlCreator( getLastParts(window.location.pathname)),
+                          data: {},
+                          success: addMultipleCountdowns(undefined, undefined),
+                          failure: function (error) {
+                                model.messages.error("Pagination error: " + error);
+                          },
+                          method: "GET"};
+        }
+        countdownAction(lastAction);
     };
     var lastAction;
 
@@ -51,19 +54,11 @@ var controller = function (model, server) {
                     if (config.failure !== undefined) {
                         config.failure(o.error);
                     }
+                    console.log("Countdown error: " + o.error);
+                    return;
                 }
-                if (isArray(o)) {
-                    if(config.ogp === undefined) {
-                        model.putCountdowns(o);
-                    } else {
-                        model.putCountdownOGP(o[0]);
-                    }
-                } else {
-                    model.putCountdown(o);
-                }
-                if (config.success !== undefined) {
-                    config.success(o);
-                }
+
+                config.success(o);
             },
             error: function (e) {
                 model.messages.clear();
@@ -75,6 +70,42 @@ var controller = function (model, server) {
         });
     };
 
+    var addMultipleCountdowns = function (success, failure) {
+        return function (o) {
+            if (o.hasOwnProperty("countdowns")) {
+                model.putCountdowns(o.countdowns);
+                if (typeof(success) !== "undefined") {
+                    success(o.countdowns);
+                }
+            } else {
+                if (typeof(failure) !== "undefined") {
+                    failure("No countdowns received.");
+                } else {
+                    model.messages.error("No countdowns received.");
+                }
+                console.log("No countdowns received.");
+            }
+        };
+    };
+
+    var addSingleCountdown = function (success, failure) {
+        return function (o) {
+            if (o.hasOwnProperty("countdown")) {
+                model.putCountdownOGP(o.countdown);
+                if (typeof(success) !== "undefined") {
+                    success(o.countdown);
+                }
+            } else {
+                if (typeof(failure) !== "undefined") {
+                    failure("No countdown received.");
+                } else {
+                    model.messages.error("No countdown received.");
+                }
+                console.log("No countdown received.");
+            }
+        };
+    };
+
     return {
         clear: function (e) {
             model.clear();
@@ -84,44 +115,24 @@ var controller = function (model, server) {
             countdownAction({url: "/random",
                              data: {},
                              method: "GET",
-                             success: callback,
+                             success: addSingleCountdown(callback, failure),
                              failure: failure
                             });
         },
-        nextDay: function (callback, failure) {
-            lastAction = {url:"/day", data:{}, method:"GET", success:callback, failure:failure};
-            countdownAction(lastAction);
-        },
-        nextWeek: function (callback, failure) {
-            lastAction = {url:"/week", data:{}, method:"GET", success:callback, failure:failure};
-            countdownAction(lastAction);
-        },
-        nextMonth: function (callback, failure) {
-            lastAction = {url:"/month", data:{}, method: "GET", success: callback, failure:failure};
-            countdownAction(lastAction);
-        },
-        nextWeekend: function (callback, failure) {
-            lastAction = {url: "/weekend", data:{}, method:"GET", success: callback, failure: failure};
-            countdownAction(lastAction);
-        },
-        nextYear: function (callback, failure) {
-            lastAction = {url : "/year", data: {}, method: "GET", success: callback, failure: failure};
-            countdownAction(lastAction);
-        },
         search: function(data) {
-            lastAction = {url: "/countdowns", data: data, method: "GET"};
+            lastAction = {url: "/countdowns", data: data, method: "GET", success: addMultipleCountdowns(undefined,undefined)};
             countdownAction(lastAction);
         },
         countdown: function (id, callback, failure) {
-            countdownAction({url:"?" + id, data: {}, method:"GET", success: callback, failure: failure, ogp: true});
+            countdownAction({url:"?" + id, data: {}, method:"GET", success: addSingleCountdown(success, failure), failure: failure});
         },
         
         newCountdown:  function (data, callback, failure) {
             countdownAction({
                 url: "/insert",
-                data:data,
+                data: data,
                 method: "POST",
-                success: callback,
+                success: addSingleCountdown(callback, failure),
                 failure: failure
             });
         },
@@ -138,8 +149,7 @@ var controller = function (model, server) {
             };
             pagination(getNewUrl);
         },
-        messages: model.messages,
-        countdownAction: countdownAction
+        messages: model.messages
     };
 };
 

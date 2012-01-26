@@ -96,7 +96,7 @@ var model = function (countdownHolder, head, options) {
 
         //ads a countdown, does not refresh the view - NB USE c_id NOT c.url
         _putCountdown: function (c) {
-            var where = this.find(c), outside, c_id = (typeof(c._id )!== undefined) ? c._id.toString() : "";
+            var where = this.find(c), outside, c_id = (typeof(c._id )!== "undefined") ? c._id.toString() : "";
 
             if (where === undefined) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
@@ -151,8 +151,6 @@ var model = function (countdownHolder, head, options) {
         _next : function(lastC) {
             return '<a href="#" onclick="' ;
         },
-        
-        pending: 0,
         
         clear: function () {
             messages.clear();

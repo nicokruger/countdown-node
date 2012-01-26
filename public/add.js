@@ -39,7 +39,7 @@ $(function () {
     };
 
     var newCountdown = function (e) {
-        e.preventDefault();
+        if (typeof(e) !== "undefined") { e.preventDefault(); }
 
         gather(function (data) {
             c.newCountdown(data, function () {
@@ -71,10 +71,37 @@ $(function () {
     $("#countdownTimezone").change(preview);
     $("#countdownTags").change(preview);
 
-    $("#newcountdownForm").bind("submit", newCountdown);
     $("#countdownName").focus();
     
     $("#countdownDatetime").datepicker();
     var h = $("#countdownTime").hours();
+
+    $("#addPublic").click(function (e) {
+        e.preventDefault();
+
+        gather(function (data) {
+            c.newCountdown(data, function (c) {
+                window.location.pathname = "/" + c._id;
+            });
+        });
+    });
+
+    $("#addPrivate").click(function (e) {
+        e.preventDefault();
+        gather(function (data) {
+            data.isPrivate = true;
+            c.newCountdown(data, function (c) {
+                window.location.pathname = "/" + c._id;
+            });
+        });
+    });
+
+    $("#addMulti").click(function (e) {
+        e.preventDefault();
+        gather(function (data) {
+            c.newCountdown(data, function (c) { c.messages.info("Added counter."); });
+        });
+    });
+
 });
 

@@ -39,13 +39,14 @@ var logger = new (winston.Logger)({
     ]
   });
 // make winston pretty print stuff on console
-logger.cli();
+//logger.cli();
 
 var failure = function (req, resp, error) {
-    logger.error("When Is Failure", {req: req.url, error_s: error.toString(), error: error});
+    var msg = ((typeof(error) !== "undefined" && error !== null) ? error.toString() : "");
+    logger.error("When Is Failure", {req: req.url, error_s: msg, error: error});
     client.error503(req, resp, function (r,w) {
         var $ = w.$;
-        $("#message").html(error.toString());
+        $("#message").html(msg);
         r.writeHead(503, {"Content-type":"text/html"});
         r.end(w.document.innerHTML);
     });
@@ -63,7 +64,10 @@ var countdownFromReq = function(req){
     var countdown = {};
     countdown.tags = req.body.tags;
     countdown.name = req.body.name === undefined ? 'no-name' : req.body.name;
-    countdown.eventDate = req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10);
+    countdown.eventDate = new Date(req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10));
+    if (req.body.hasOwnProperty("isPrivate")) {
+        countdown.isPrivate = req.body.isPrivate;
+    }
     return countdown;
 };
 
@@ -82,7 +86,7 @@ var defaultRoute = function(req, res){
     console.log("default: " + req.is("application/json"));
     if(req.accepts('json')){
         countdownProvider.future(pagination, function(data){
-            res.json(data);
+            res.json({countdowns:data});
         }, underscore.bind(failure, undefined, req, res));
     }
     else {
@@ -168,14 +172,14 @@ router.get("/countdowns/:skip?", function (req, res) {
 router.post('/upsert', function (req, res) {
     var countdown = countdownFromReq(req);
     countdownProvider.upsert(countdown, function(data) {
-        res.json(data);
+        res.json({countdown:data});
     }, underscore.bind(failure, undefined, req, res));
 });
 
 router.post('/insert', function (req, res) {
     var countdown = countdownFromReq(req);
     countdownProvider.insert(countdown, function(data) {
-        res.json({countdowns:data});
+        res.json({countdown:data});
     }, underscore.bind(failure, undefined, req, res));
 });
 
@@ -225,6 +229,7 @@ router.error(function(err, req, res, next){
             res.end(w.document.innerHTML);
         });
     } else {
+        winston.error("Generic error", {err:req});
         next(err);
     }
 });

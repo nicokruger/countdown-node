@@ -110,8 +110,16 @@ CountdownProvider.prototype.searchTags = function(startsWith, callback, failure)
 CountdownProvider.prototype.upsert = function(countdown, callback, failure) {
    this.collection(function (error, coll) {
        if (error) failure(error);
-       coll.update({name : countdown.name}, countdown, {upsert: true}, function(error, docs) {
-           callback(docs);
+       coll.update({name : countdown.name}, countdown, {upsert: true, safe:true}, function(error, docs) {
+            if (error) {
+                if (typeof(failure) !== "undefined") {
+                    failure(error);
+                } else {
+                    console.log("[no error handler] Error: " + error);
+                }
+            } else {
+               callback(docs[0]);
+            }
         });
     });
 };
@@ -119,8 +127,18 @@ CountdownProvider.prototype.upsert = function(countdown, callback, failure) {
 CountdownProvider.prototype.insert = function(countdown, callback, failure) {
     this.collection(function (error, coll) {
         if (error) failure(error);
-        coll.insert(countdown, function(error, docs) {
-            callback(docs);
+        console.log("Inserting: " + JSON.stringify(countdown));
+        coll.insert(countdown, {safe: true}, function(error, docs) {
+            console.log("Got: " + JSON.stringify(docs));
+            if (error) {
+                if (typeof(failure) !== "undefined") {
+                    failure(error);
+                } else {
+                    console.log("[no error handler] Error: " + error);
+                }
+            } else {
+                callback(docs[0]);
+            }
         });
     });
 };
