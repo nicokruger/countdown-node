@@ -20,6 +20,7 @@ var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
 var addHtml = fs.readFileSync("add.html").toString();
 
+
 //pagination limit and initial query marker
 var defaultLimit = 4,
     defaultLast = {name: ' ', eventDate: new Date()};

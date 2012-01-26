@@ -7,6 +7,16 @@ var underscore = require("./public/vendor/underscore.js");
 
 var XMLHttpRequest = X.XMLHttpRequest;
 //global.XMLHttpRequest = X.XMLHttpRequest;
+var google_analytics;
+if (typeof(process.env.GOOGLE_ANALYTICS_UA) !== "undefined") {
+    var ua = process.env.GOOGLE_ANALYTICS_UA;
+    console.log("Enabling google analytics with UA: " + ua);
+    google_analytics = underscore.template(fs.readFileSync("./google_analytics.html").toString(), {GOOGLE_ANALYTICS_UA:ua});
+} else {
+    console.log("Not enabling google analytics. Please set GOOGLE_ANALYTICS_UA to a valid GA UA string for analytics.");
+    google_analytics = "";
+}
+
 
 var loadCompleted = function (window) {
     var $ = window.$;
@@ -85,7 +95,8 @@ createPage(function (window) {
         "pagination" : fs.readFileSync("./pagination.html").toString(),
         "footer" : fs.readFileSync("./footer.html").toString(),
         "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js"
+        "indexjs": "/public/index.js",
+        "google_analytics" : google_analytics
     }
 ), scripts);
 
@@ -97,7 +108,8 @@ createPage(function (window) {
         "pagination" : '',
         "footer" : fs.readFileSync("./footer.html").toString(),
         "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js"
+        "indexjs": "/public/index.js",
+        "google_analytics" : google_analytics
     }
 ), scripts);
 // Create the DOM for the addpage
@@ -109,7 +121,8 @@ createPage(function (window) {
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("./footer.html").toString(),
         "css" : "/public/whenis.css",
-        "indexjs" : "/public/add.js"
+        "indexjs" : "/public/add.js",
+        "google_analytics" : google_analytics
     }
 ), scripts);
 
@@ -122,7 +135,8 @@ createPage(function (window) {
         "pagination" : '<div></div>',
         "footer" : '<footer>Brought to you by <a href="http://www.whenis.co.za">When Is</a></footer>',
         "css" : "/public/whenis-headless.css",
-        "indexjs" : "/public/index.headless.js"
+        "indexjs" : "/public/index.headless.js",
+        "google_analytics" : google_analytics
     }
 ), scripts);
 
@@ -135,7 +149,8 @@ createPage(function (window) {
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("./footer-contact.html").toString(),
         "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js"
+        "indexjs": "/public/index.js",
+        "google_analytics" : google_analytics
     }
 ), scripts);
 
@@ -148,7 +163,8 @@ createPage(function (window) {
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("./footer-contact.html").toString(),
         "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js"
+        "indexjs": "/public/index.js",
+        "google_analytics" : google_analytics
     }
 ), scripts);
 
