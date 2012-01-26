@@ -40,6 +40,11 @@ $(function () {
       }
   });
 
+  $("#searchbox").focus();
+  $("#searchbox").focus(function () {
+      setTimeout($("#searchbox").select, 0);
+  });
+
 });
     
 var parseSearchData = function (text) {
