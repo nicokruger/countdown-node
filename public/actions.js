@@ -47,7 +47,14 @@ var actions = function (controller) {
         
         search: function(data) {
             controller.search(data);
+        },
+        next: function(data) {
+            controller.next(data);
+        },
+        prev: function(data) {
+            controller.prev(data);
         }
+
 
                 
     };

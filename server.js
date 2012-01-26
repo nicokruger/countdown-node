@@ -20,6 +20,10 @@ var error404 = fs.readFileSync("404.html").toString();
 var error503 = fs.readFileSync("503.html").toString();
 var addHtml = fs.readFileSync("add.html").toString();
 
+//pagination limit and initial query marker
+var defaultLimit = 4,
+    defaultLast = {name: ' ', eventDate: new Date()};
+
 // http router
 var router = express.createServer();
 // Static file server
@@ -57,12 +61,39 @@ var putMongoCountdowns = function (data, resp, window){
 
 var countdownFromReq = function(req){
     var countdown = {};
-    console.log("Req: " + JSON.stringify(req.body));
-	countdown.tags = req.body.tags;
-	countdown.name = req.body.name === undefined ? 'no-name' : req.body.name;
-	countdown.eventDate = req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10);
+    countdown.tags = req.body.tags;
+    countdown.name = req.body.name === undefined ? 'no-name' : req.body.name;
+    countdown.eventDate = req.body.eventDate === undefined ? 0 : parseInt(req.body.eventDate, 10);
     return countdown;
 };
+
+var getPaginationParams = function(req){
+    var limit = req.query.limit === undefined? defaultLimit : req.query.limit;
+    var last = defaultLast;
+    if(req.query.eventDate !== undefined && req.query.name !== undefined){
+        last = {name : req.query.name, eventDate: new Date( parseInt(req.query.eventDate, 10)) };
+    }
+    return {'last' : last, 'limit' : limit};
+};
+    
+var defaultRoute = function(req, res){
+    var skip = isNaN(parseInt(req.params.skip, 10)) ? 0 : parseInt(req.params.skip, 10),
+        pagination = {limit: defaultLimit, skip: skip};
+    console.log("default: " + req.is("application/json"));
+    if(req.accepts('json')){
+        countdownProvider.future(pagination, function(data){
+            res.json(data);
+        }, underscore.bind(failure, undefined, req, res));
+    }
+    else {
+        client.countdowns(req, res, function(r,w) {
+            countdownProvider.future(pagination, function(data){
+                putMongoCountdowns(data, r, w);
+            });
+        }, underscore.bind(failure, undefined, req, res));
+    }
+};
+
 
 /**
     "r`/tags/(.+)`": function (req, res, matches) {
@@ -74,18 +105,12 @@ var countdownFromReq = function(req){
     },
 */
 router.configure( function(req,res) {
-	router.use('/public', express.static('./public')); // static is a reserved word
+    router.use('/public', express.static('./public')); // static is a reserved word
     router.use(express.bodyParser());
-	router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+    router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-router.get("/", function (req,res) {
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.week(function(data){
-			putMongoCountdowns(data, r, w);
-        });
-    }, underscore.bind(failure, undefined, req, res));
-});
+router.get("/", defaultRoute);
 
 router.get("/add", function (req, res) {
     client.add(req, res, function (r,w) {
@@ -94,75 +119,64 @@ router.get("/add", function (req, res) {
     }, underscore.bind(failure, undefined, req, res));
 });
 
-router.get("/day", function (req,res) {
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.day(function(data){
-			putMongoCountdowns(data, r, w);
-        });
-    }, underscore.bind(failure, undefined, req, res));
-});
+router.get("/future/:skip?", defaultRoute);
 
-router.get("/week", function (req,res) {
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.week(function(data){
-			putMongoCountdowns(data, r, w);
-        });
-    }, underscore.bind(failure, undefined, req, res));
-});
-router.get("/month", function (req,res) {
-	client.countdowns(req, res, function(r,w) {
-		countdownProvider.month(function(data){
-			putMongoCountdowns(data, r, w);
-		});
-	}, underscore.bind(failure, undefined, req, res));
-});
-router.get("/year", function (req,res) {
-	client.countdowns(req, res, function (r, w) {
-		countdownProvider.year ( function(data) {
-			putMongoCountdowns(data, r, w);
-		});
-	}, underscore.bind(failure, undefined, req, res));
-});
-router.get("/random", function (req,res) {
-	client.countdowns(req, res, function (r, w) {
-		countdownProvider.random ( function(data) {
-			putMongoCountdowns(data, r, w);
-		});
-	}, underscore.bind(failure, undefined, req, res));
-});
-router.get("/countdowns", function (req, res) {
-        
-	var params = {};
-	params.name = req.query.name === undefined ? '' : req.query.name;
-    
-	params.tags = parseTags(req.query.tags);
-	params.start = new Date(req.query.start === undefined ? 0 : parseInt(req.query.start, 10));
-	params.end = req.query.end === undefined ? undefined : new Date( parseInt(req.query.end, 10));
-
-	if(req.is('application/json')){
-        countdownProvider.search(params, function(data){
+router.get("/random/:something?", function (req,res) {
+    if(req.is('application/json')){
+        countdownProvider.random(function(data){
             res.json(data);
         }, underscore.bind(failure, undefined, req, res));
-	}
-	else {
-        r.writeHead(400, {"Content-type":"text/html"});
-        r.end("Not valid");
-	}
+    }
+    else {
+        client.countdowns(req, res, function (r, w) {
+            countdownProvider.random ( function(data) {
+                putMongoCountdowns(data, r, w);
+            });
+        }, underscore.bind(failure, undefined, req, res));
+    }
+});
+ 
+
+router.get("/countdowns/:skip?", function (req, res) {
+    var parseTags = function(tagsString) {
+        if(tagsString !== undefined) {
+            return tagsString.split(',');
+        }
+        else return [];
+    };
+    console.log("Searching");
+    var skip = isNaN(parseInt(req.params.skip, 10)) ? 0 : parseInt(req.params.skip, 10),
+        pagination = {limit: defaultLimit, skip: skip};
+
+    var params = {};
+    params.name = req.query.name === undefined ? '' : req.query.name;
+    
+    params.tags = parseTags(req.query.tags);
+    params.start = new Date(req.query.start === undefined ? 0 : parseInt(req.query.start, 10));
+    params.end = req.query.end === undefined ? undefined : new Date( parseInt(req.query.end, 10));
+    if(req.accepts('json')){
+        countdownProvider.search(params, pagination, function(data){
+            res.json(data);
+        }, underscore.bind(failure, undefined, req, res));
+    }
+    else {
+        req.writeHead(400, {"Content-type":"text/html"});
+        req.end("Not valid");
+    }
 });
 
 router.post('/upsert', function (req, res) {
-	var countdown = countdownFromReq(req);
-    logger.info('upserting ' + countdown.eventDate.getTime());
+    var countdown = countdownFromReq(req);
     countdownProvider.upsert(countdown, function(data) {
-		res.json(data);
+        res.json(data);
     }, underscore.bind(failure, undefined, req, res));
 });
 
 router.post('/insert', function (req, res) {
-	var countdown = countdownFromReq(req);
-	countdownProvider.insert(countdown, function(data) {
-		res.json({countdowns:data});
-	}, underscore.bind(failure, undefined, req, res));
+    var countdown = countdownFromReq(req);
+    countdownProvider.insert(countdown, function(data) {
+        res.json({countdowns:data});
+    }, underscore.bind(failure, undefined, req, res));
 });
 
 router.get("/favicon.ico", function (req,res) {

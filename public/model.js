@@ -77,7 +77,7 @@ var model = function (countdownHolder, head, options) {
             _(countdowns).each(function (countdown) {
                 that._putCountdown(countdown);
             });
-
+            
             counters = timo.counters($(countdownQuery), timoCounterType);
         },
         // adds a countdown, and refreshes the view
@@ -94,9 +94,9 @@ var model = function (countdownHolder, head, options) {
             $(head).append(meta);
         },
 
-        //ads a countdown, does not refresh the view
+        //ads a countdown, does not refresh the view - NB USE c_id NOT c.url
         _putCountdown: function (c) {
-            var where = this.find(c), outside, c_id = (typeof(c._id )!== "undefined") ? c._id.toString() : "";
+            var where = this.find(c), outside, c_id = (typeof(c._id )!== undefined) ? c._id.toString() : "";
 
             if (where === undefined) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
@@ -120,48 +120,52 @@ var model = function (countdownHolder, head, options) {
                 social.append(this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id));
             }
             // Countdown itself
-            var cd = $("<span class=\"countdown-counter\" id=\"" + c.url + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
+            var cd = $("<span class=\"countdown-counter\" id=\"" + c_id + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
 
             return $(outside);
         },
-    _facebook_link : function(url) {
-        return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
-        'scrolling="no" frameborder="0" style="border:none; width: 85px; height:20px"></iframe></span>';
-    },
-    _twitter_link : function(url) {
-        return '<span class="social-link"><a href="http://twitter.com/share" class="twitter-share-button" ' +
-        'data-url="http://www.whenis.co.za/' + url + '">Tweet</a></span>';
-    },
-    _plusone_link : function(url) {
-        return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenis.co.za/' + url + '"></g:plusone></span>';
-    },
-    messages: messages,
-    _ogp : function(c) {
-        return {
-            title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
-            //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
-            ogtype: '<meta property="og:type" content="website" />',
-            url: '<meta property="og:url" content="http://www.whenis.co.za/' + c._id.toString() + '" />',
-            description: '<meta property="og:description" content="WhenIs - Release Dates For Games, Movies, Music and Everything Else" />',
-            metaTags: function(){
-                return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
-            }
-        };
-    },
+        _facebook_link : function(url) {
+            return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
+                'scrolling="no" frameborder="0" style="border:none; width: 85px; height:20px"></iframe></span>';
+        },
+        _twitter_link : function(url) {
+            return '<span class="social-link"><a href="http://twitter.com/share" class="twitter-share-button" ' +
+                'data-url="http://www.whenis.co.za/' + url + '">Tweet</a></span>';
+        },
+        _plusone_link : function(url) {
+            return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenis.co.za/' + url + '"></g:plusone></span>';
+        },
+        messages: messages,
+        _ogp : function(c) {
+            return {
+                title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
+                //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
+                ogtype: '<meta property="og:type" content="website" />',
+                url: '<meta property="og:url" content="http://www.whenis.co.za/' + c._id.toString() + '" />',
+                description: '<meta property="og:description" content="WhenIs - Release Dates For Games, Movies, Music and Everything Else" />',
+                metaTags: function(){
+                    return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
+                }
+            };
+        },
+        _next : function(lastC) {
+            return '<a href="#" onclick="' ;
+        },
         
-    pending: 0,
+        pending: 0,
         
-    clear: function () {
-        messages.clear();
-        this.countdowns = [];
-        countdownHolder.html(emptyHtml);
-    }
+        clear: function () {
+            messages.clear();
+            this.countdowns = [];
+            countdownHolder.html(emptyHtml);
+        }
 
     };
 
 };
 
-$(function () {
-});
- 
+if (typeof(exports) !== "undefined") {
+    exports.model = model;
+}
+
 //exports.model = model;

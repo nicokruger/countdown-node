@@ -1,22 +1,50 @@
 
 var controller = function (model, server) {
+    
     server = server === undefined ? "" : server;
+    var skipAmount = 4;
     var isArray = function(value) {
         return Object.prototype.toString.apply(value) == '[object Array]';
     };
+    var getLastParts = function(path){
+        if(path == "/") return {path: "future", skip: 0 };
+        var parts = path.split('/').splice(1),
+            pathname = parts[0],
+            skip = (parts[1] === undefined ? 0 : parseInt(parts[1], 10));
+        return {path: pathname, skip: skip};
+    };
+    
+    //built-in way to do this?
+    var createParamString = function(params){
+        if(params === undefined) return "";
+        var ps = "?", f;
+        for (f in params){
+            ps += (f + "=" + encodeURIComponent(params[f]) + "&");
+        }
+       // console.log("PARAM STRNIG: "+ ps);
+        return ps;
+    };
+
+    var pagination = function( urlCreator ) {
+        if(lastAction !== undefined) {
+                lastAction.url = urlCreator( getLastParts(lastAction.url));
+            }
+            if(lastAction === undefined) {
+                lastAction = {url: urlCreator( getLastParts(window.location.pathname)),
+                              data: {},
+                              method: "GET"};
+            }
+            countdownAction(lastAction);
+    };
+    var lastAction;
 
     var countdownAction = function (config)  {
-
+        console.log("Doing countdownAction " + server + config.url );
         $.ajax({
-            url: server + config.url,
-            //url: "http://localhost:55555/filesystem/index.html",
-            //data: JSON.stringify(config.data),
+            url: server + config.url + createParamString(config.params),
             data: config.data,
             type: config.method,
             dataType: "json",
-            /*beforeSend: function( xhr ) {
-                xhr.setRequestHeader('Content-Type', 'application/json');
-            },*/
             success: function (o) {
                 model.clear();
                 if (o.hasOwnProperty("error")) {
@@ -54,29 +82,41 @@ var controller = function (model, server) {
         },
         random: function (callback, failure) {
             countdownAction({url: "/random",
-                data: {},
-                method: "GET",
-                success: callback,
-                failure: failure
-            });
+                             data: {},
+                             method: "GET",
+                             success: callback,
+                             failure: failure
+                            });
+        },
+        nextDay: function (callback, failure) {
+            lastAction = {url:"/day", data:{}, method:"GET", success:callback, failure:failure};
+            countdownAction(lastAction);
+        },
+        nextWeek: function (callback, failure) {
+            lastAction = {url:"/week", data:{}, method:"GET", success:callback, failure:failure};
+            countdownAction(lastAction);
         },
         nextMonth: function (callback, failure) {
-            countdownAction("/month", {}, "GET", callback, failure);
+            lastAction = {url:"/month", data:{}, method: "GET", success: callback, failure:failure};
+            countdownAction(lastAction);
         },
         nextWeekend: function (callback, failure) {
-            countdownAction("/weekend", {}, "GET", callback, failure);
+            lastAction = {url: "/weekend", data:{}, method:"GET", success: callback, failure: failure};
+            countdownAction(lastAction);
         },
         nextYear: function (callback, failure) {
-            countdownAction("/year", {}, "GET", callback, failure);
+            lastAction = {url : "/year", data: {}, method: "GET", success: callback, failure: failure};
+            countdownAction(lastAction);
         },
-        search: function(data, callback, failure) {
-            countdownAction("/countdowns", data, "GET", callback, failure);
+        search: function(data) {
+            lastAction = {url: "/countdowns", data: data, method: "GET"};
+            countdownAction(lastAction);
         },
         countdown: function (id, callback, failure) {
-            countdownAction("?" + id, {}, "GET", callback, failure, true);
+            countdownAction({url:"?" + id, data: {}, method:"GET", success: callback, failure: failure, ogp: true});
         },
+        
         newCountdown:  function (data, callback, failure) {
-            // contentType: "application/json",
             countdownAction({
                 url: "/insert",
                 data:data,
@@ -84,6 +124,19 @@ var controller = function (model, server) {
                 success: callback,
                 failure: failure
             });
+        },
+        next: function (callback, failure) {
+            var getNewUrl = function(parts) {
+                return "/" + parts.path + "/" + ( parts.skip + skipAmount );
+            };
+            pagination(getNewUrl);
+        },
+        prev: function(callback, failure) {
+            var getNewUrl = function(parts) {
+                var skip = parts.skip === 0? 0 : parts.skip - skipAmount;
+                return "/" + parts.path + "/" + skip;
+            };
+            pagination(getNewUrl);
         },
         messages: model.messages,
         countdownAction: countdownAction

@@ -15,7 +15,7 @@ $(function () {
   });
 
   var m = model($("#countdownlist"), undefined, {counterType: timo.normalCounterType});
-  var c = controller(m, "http://" + window.location.hostname);
+  var c = controller(m, "http://" + window.location.hostname  +":" + window.location.port);
   var action = actions(c);
 
   $("#random").click(action.random);
@@ -23,6 +23,10 @@ $(function () {
   $("#fetchWeek").click(action.nextWeek);
   $("#fetchMonth").click(action.nextMonth);
   $("#fetchYear").click(action.nextYear);
+
+  //pagination
+  $("#next_link").click(action.next);
+  $("#prev_link").click(action.prev);
 
   $("#searchForm").bind("submit", action.search);
 
