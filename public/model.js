@@ -20,6 +20,9 @@ var logger = function (where) {
         error: function (message) {
             $(where).append('<div class="alert-message error">' + message + '</div>');
         },
+        info: function (message) {
+            $(where).append('<div class="alert-message success">' + message + '</div>');
+        },
         clear: function () {
             $(where).html("");
         }
@@ -152,8 +155,10 @@ var model = function (countdownHolder, head, options) {
             return '<a href="#" onclick="' ;
         },
         
-        clear: function () {
-            messages.clear();
+        clear: function (leaveMessages) {
+            if (typeof(leaveMessages) !== "undefined" && !leaveMessages) {
+                messages.clear();
+            }
             this.countdowns = [];
             countdownHolder.html(emptyHtml);
         }

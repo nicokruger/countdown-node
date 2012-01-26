@@ -1,3 +1,13 @@
+    var newCountdown = function (e) {
+        if (typeof(e) !== "undefined") { e.preventDefault(); }
+
+        gather(function (data) {
+            c.newCountdown(data, function () {
+                alert("added");
+            });
+        });
+    };
+
 $(function () {
     var m = model($("#countdownlist"), undefined, {
         counterType: timo.normalCounterType,
@@ -5,7 +15,6 @@ $(function () {
         counterLink: false
     });
     var c = controller(m, "http://" + window.location.hostname +":" + window.location.port);
-    var action = actions(c);
     var initialDatetime = moment().add("hours", 3);
 
     var gather = function (success) {
@@ -38,21 +47,16 @@ $(function () {
         success(data);
     };
 
-    var newCountdown = function (e) {
-        if (typeof(e) !== "undefined") { e.preventDefault(); }
-
-        gather(function (data) {
-            c.newCountdown(data, function () {
-                alert("added");
-            });
-        });
-    };
-
     var preview = function () {
         if (!$("#countdownName").val()) {
-            $(".actions").hide();
+            $("#previewMessage").show();
+            $("#previewMessage").html('<div class="alert-message block-message warning">Please enter name, time and optional tags</div>');
+            $("#preview").hide();
+            $(".actions .btn").attr("disabled", true);
         } else {
-            $(".actions").show();
+            $("#previewMessage").hide();
+            $("#preview").show();
+            $(".actions .btn").attr("disabled", false);
         }
         gather(function (data) {
             m.clear();
@@ -62,14 +66,13 @@ $(function () {
     
     $("#countdownDatetime").val(initialDatetime.format("YYYY-MM-DD"));
     $("#countdownTime").val(initialDatetime.format("HH:mm"));
-    preview();
 
-    $("#countdownName").change(preview);
-    $("#countdownName").keypress(function () { setTimeout(preview,0);});
-    $("#countdownDatetime").change(preview);
-    $("#countdownTime").change(preview);
-    $("#countdownTimezone").change(preview);
-    $("#countdownTags").change(preview);
+    $("#countdownName").keydown(function () { setTimeout(preview, 0); });
+    $("#countdownDatetime").keydown(function () {setTimeout(preview, 0); });
+    $("#countdownDatetime").change(function () {setTimeout(preview, 0); });
+    $("#countdownTime").keydown(function () {setTimeout(preview, 0); });
+    $("#countdownTimezone").change(function () {setTimeout(preview, 0); });
+    $("#countdownTags").keydown(function () {setTimeout(preview, 0); });
 
     $("#countdownName").focus();
     
@@ -99,7 +102,12 @@ $(function () {
     $("#addMulti").click(function (e) {
         e.preventDefault();
         gather(function (data) {
-            c.newCountdown(data, function (c) { c.messages.info("Added counter."); });
+            c.newCountdown(data, function (c) {
+                $("#countdownName").val("");
+                $("#countdownName").focus();
+                preview();
+                $("#previewMessage").html('<div class="alert-message success">Added counter.</div>');
+            });
         });
     });
 
