@@ -54,8 +54,13 @@ var failure = function (req, resp, error) {
 
 };
 
-var createDom = function (data, resp, window){
+var defaultTitle = "When Is - Release dates for games, movies, music and everything in between";
+var createDom = function (data, resp, window, title){
     window.c.clear();
+    if (typeof(title) === "undefined") {
+        title = defaultTitle;
+    }
+    window.$('title').html(title);
     window.m.putCountdowns(data);
     resp.writeHead(200, {"Content-type":"text/html"});
     resp.end(window.document.innerHTML);
@@ -218,13 +223,13 @@ router.get('/:id', function(req, res) {
     if (typeof(query) === "undefined" || query["embedded"] !== "true") {
         client.nonpaginated(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w);
+                createDom(data, r, w, "When Is - " + data[0].name);
             }, underscore.bind(failure, undefined, req, res));
         });
     } else {
         client.headless(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w);
+                createDom(data, r, w, "When Is - " + data[0].name);
             }, underscore.bind(failure, undefined, req, res));
         });
     }
