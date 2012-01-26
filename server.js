@@ -39,6 +39,11 @@ var logger = new (winston.Logger)({
       new (winston.transports.File)({ filename: 'whenis.log', timestamp: true, json:false })
     ]
   });
+
+var request_logger = function (req, res, next) {
+    logger.info("[REQ]", {url:req.url, ip:req.connection.remoteAddress});
+    next();
+};
 // make winston pretty print stuff on console
 //logger.cli();
 
@@ -107,8 +112,10 @@ var defaultRoute = function(req, res){
 
 router.configure( function(req,res) {
     router.use('/public', express.static('./public')); // static is a reserved word
+    router.use(request_logger);
     router.use(express.bodyParser());
     router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+
 });
 
 router.get("/", defaultRoute);
@@ -200,6 +207,7 @@ router.post('/upsert', function (req, res) {
 router.post('/insert', function (req, res) {
     var countdown = countdownFromReq(req);
     countdownProvider.insert(countdown, function(data) {
+        logger.info("Countdown added: " + data.name);
         res.json({countdown:data});
     }, underscore.bind(failure, undefined, req, res));
 });
@@ -255,4 +263,7 @@ router.error(function(err, req, res, next){
     }
 });
 router.listen(8080);
+
+
+
 
