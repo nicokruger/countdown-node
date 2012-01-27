@@ -17,6 +17,7 @@ So basically, you need to install node.js and npm using your distro package mana
      npm install node-static
      npm install mongodb --mongodb:native
      npm install express
+     npm install winston
 
 Then run with the following command:
 

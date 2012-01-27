@@ -48,11 +48,15 @@ var actions = function (controller) {
         search: function(data) {
             controller.search(data);
         },
-        next: function(data) {
-            controller.next(data);
+        next: function(e) {
+            //e.preventDefault();
+            controller.next();
+            //controller.makePagination();
         },
-        prev: function(data) {
-            controller.prev(data);
+        prev: function(e) {
+            //e.preventDefault();
+            controller.prev();
+            //controller.makePagination();
         }
 
 

@@ -46,14 +46,17 @@
             </div>
 
             <div class="actions">
-                <div id="preview">
+                <div id="previewMessage">
+                    <div class="alert-message block-message warning">Please enter name, time and optional tags</div>
+                </div>
+                <div id="preview" style="display:none">
                     <div class="alert-message info">Preview:</div>
-                    <ul id="countdownlist">
+                    <ul id="countdownlist" class="countdownlist">
                     </ul>
                 </div>
-                <input type="submit" class="btn primary" value="Add public countdown" />
-                <input type="submit" class="btn" value="Add private countdown" />
-                <input type="submit" class="btn" value="Add public and add another" />
+                <input id="addPublic" type="submit" class="btn primary" value="Add public countdown" />
+                <input id="addPrivate" type="submit" class="btn" value="Add private countdown" />
+                <input id="addMulti" type="submit" class="btn" value="Add public and add another" />
                 <div class="explanatory">
                     <span><b>Public</b> counters are visible to anyone, through the main interface and searches.</span>
                     <span><b>Private</b> counters will NOT be visible through the main interface or through searches. You will get a private URL which you can use

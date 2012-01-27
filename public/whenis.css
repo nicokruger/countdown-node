@@ -26,7 +26,7 @@ body {
     -webkit-border-radius: 15px; 
     border-radius: 15px;    
 }
-#countdownlist {
+.countdownlist {
     list-style: none;
     margin: 0 auto;
     width: 800px;
@@ -420,4 +420,8 @@ label {
 .explanatory span {
   display:block;
   padding:15px;
+}
+
+#previewMessage {
+  padding: 15px;
 }

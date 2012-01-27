@@ -20,12 +20,23 @@ var logger = function (where) {
         error: function (message) {
             $(where).append('<div class="alert-message error">' + message + '</div>');
         },
+        info: function (message) {
+            $(where).append('<div class="alert-message success">' + message + '</div>');
+        },
         clear: function () {
             $(where).html("");
         }
     };
 };
-var model = function (countdownHolder, head, timoCounterType) {
+var defaultModelOptions = {
+    counterType: timo.normalCounterType,
+    socialLinks: true,
+    counterLink: true
+};
+
+var model = function (countdownHolder, head, options) {
+    options = _.extend(defaultModelOptions, options);
+    var timoCounterType = options.counterType;
     var messages = logger($("<div class=\"messages\"></div>").insertBefore(countdownHolder));
     var counters;
     var curTimoType = 0;
@@ -70,8 +81,6 @@ var model = function (countdownHolder, head, timoCounterType) {
                 that._putCountdown(countdown);
             });
             
-            $(countdownHolder).insertAfter
-            
             counters = timo.counters($(countdownQuery), timoCounterType);
         },
         // adds a countdown, and refreshes the view
@@ -90,7 +99,7 @@ var model = function (countdownHolder, head, timoCounterType) {
 
         //ads a countdown, does not refresh the view - NB USE c_id NOT c.url
         _putCountdown: function (c) {
-            var where = this.find(c), outside, c_id = (typeof(c._id )!== undefined) ? c._id.toString() : "";
+            var where = this.find(c), outside, c_id = (typeof(c._id )!== "undefined") ? c._id.toString() : "";
 
             if (where === undefined) {
                 outside = $('<li class="countdown"></li>').appendTo(countdownHolder);
@@ -100,16 +109,19 @@ var model = function (countdownHolder, head, timoCounterType) {
                 this.countdowns.splice(where, 0, c);
             }
             // Name of countdown
-            var countdownName = $('<span class="countdown-name"><a href="' + c_id + '">' + c.name + '</a></span>').appendTo($(outside));
+            var countdownName = $('<span class="countdown-name"><a href="' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></span>').appendTo($(outside));
             
             // Tags
             var tags = $('<span class="countdown-tags"></span>').appendTo(countdownName);
             _(c.tags).each(function (tag) {
-                tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '">' + tag + '</a></span>');
+                tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '/">' + tag + '</a></span>');
             });
-            
+           
+            var social = $('<span class="countdown-social"></span>').appendTo($(outside));
             // Social links
-            var social = $('<span class="countdown-social">' + this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id) + '</span>').appendTo($(outside));
+            if (options.socialLinks) {
+                social.append(this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id));
+            }
             // Countdown itself
             var cd = $("<span class=\"countdown-counter\" id=\"" + c_id + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
 
@@ -143,10 +155,10 @@ var model = function (countdownHolder, head, timoCounterType) {
             return '<a href="#" onclick="' ;
         },
         
-        pending: 0,
-        
-        clear: function () {
-            messages.clear();
+        clear: function (leaveMessages) {
+            if (typeof(leaveMessages) !== "undefined" && !leaveMessages) {
+                messages.clear();
+            }
             this.countdowns = [];
             countdownHolder.html(emptyHtml);
         }
@@ -155,7 +167,8 @@ var model = function (countdownHolder, head, timoCounterType) {
 
 };
 
-$(function () {
-});
+if (typeof(exports) !== "undefined") {
+    exports.model = model;
+}
 
 //exports.model = model;

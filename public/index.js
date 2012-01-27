@@ -14,7 +14,7 @@ $(function () {
     $(eventObject.target).find(".social-link").css("display","inline-block");
   });
 
-  var m = model($("#countdownlist"), undefined, timo.normalCounterType);
+  var m = model($("#countdownlist"), undefined, {counterType: timo.normalCounterType});
   var c = controller(m, "http://" + window.location.hostname  +":" + window.location.port);
   var action = actions(c);
 
@@ -38,6 +38,11 @@ $(function () {
           e.preventDefault();
           $("#searchbar").toggle();
       }
+  });
+
+  $("#searchbox").focus();
+  $("#searchbox").focus(function () {
+      setTimeout($("#searchbox").select, 0);
   });
 
 });
