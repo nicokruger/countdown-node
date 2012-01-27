@@ -87,6 +87,7 @@ CountdownProvider.prototype.searchTags = function(startsWith, callback, failure)
 };
 
 CountdownProvider.prototype.upsert = function(countdown, callback, failure) {
+   countdown.eventDate = new Date(countdown.eventDate);  //make sure the date is a date
    this.collection(function (error, coll) {
        if (error) failure(error);
        coll.update({name : countdown.name}, countdown, {upsert: true, safe:true}, function(error, docs) {
@@ -103,7 +104,22 @@ CountdownProvider.prototype.upsert = function(countdown, callback, failure) {
     });
 };
 
+CountdownProvider.prototype.upsertMulti = function(countdowns, callback, failure){
+    var i,
+        results = [];
+    
+    for (i = 0; i < countdowns.length; i++){
+        countdowns[i].eventDate = new Date(countdowns[i].eventDate);
+
+        this.upsert(countdowns[i], function( resp ){
+            results.push(resp);
+        });
+    }
+    callback(results);
+};
+
 CountdownProvider.prototype.insert = function(countdown, callback, failure) {
+    countdown.eventDate = new Date(countdown.eventDate);
     this.collection(function (error, coll) {
         if (error) failure(error);
         console.log("Inserting: " + JSON.stringify(countdown));

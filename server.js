@@ -205,6 +205,16 @@ router.post('/upsert', function (req, res) {
     }, underscore.bind(failure, undefined, req, res));
 });
 
+//scrapers should use this
+router.post('/upsertmulti', function(req, res) {
+    var countdowns = req.body.countdowns;
+        //console.log("upserting " +JSON.stringify(countdowns));
+        countdownProvider.upsertMulti(countdowns, function(data) {
+            res.json(data);
+        }, underscore.bind(failure, undefined, req, res));
+
+});
+
 router.post('/insert', function (req, res) {
     var countdown = countdownFromReq(req);
     countdownProvider.insert(countdown, function(data) {
