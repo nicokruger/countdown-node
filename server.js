@@ -54,7 +54,7 @@ var failure = function (req, resp, error) {
         var $ = w.$;
         $("#message").html(msg);
         r.writeHead(503, {"Content-type":"text/html"});
-        r.end(w.document.innerHTML);
+        r.end(w.document.doctype + w.document.innerHTML);
     });
 
 };
@@ -68,7 +68,7 @@ var createDom = function (data, resp, window, title){
     window.$('title').html(title);
     window.m.putCountdowns(data);
     resp.writeHead(200, {"Content-type":"text/html"});
-    resp.end(window.document.innerHTML);
+    resp.end(window.document.doctype + window.document.innerHTML);
 };
 
 var countdownFromReq = function(req){
@@ -123,7 +123,7 @@ router.get("/", defaultRoute);
 router.get("/add", function (req, res) {
     client.add(req, res, function (r,w) {
         res.writeHead(200, {"Content-type":"text/html"});
-        res.end(w.document.innerHTML);
+        res.end(w.document.doctype + w.document.innerHTML);
     }, underscore.bind(failure, undefined, req, res));
 });
 
@@ -257,7 +257,7 @@ router.get('/:id', function(req, res) {
 router.get("*", function (req,resp,err) { // fallback for 404's
     client.error404(req, resp, function (r,w) {
         r.writeHead(404, {"Content-type":"text/html"});
-        r.end(w.document.innerHTML);
+        r.end(w.document.doctype + w.document.innerHTML);
     });
 });
 
@@ -266,7 +266,7 @@ router.error(function(err, req, res, next){
         // our special 404
         client.error404(req, res, function (r,w) {
             res.writeHead(404, {"Content-type":"text/html"});
-            res.end(w.document.innerHTML);
+            res.end(w.document.doctype + w.document.innerHTML);
         });
     } else {
         winston.error("Generic error", {err:req});
