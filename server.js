@@ -248,13 +248,14 @@ router.get('/:id', function(req, res) {
     if (typeof(query) === "undefined" || query["embedded"] !== "true") {
         client.nonpaginated(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w, "When Is - " + data[0].name);
+                console.log("Data: " + data.length);
+                createDom(data, r, w, "When Is - " + data.length > 0 ? data[0].name : defaultTitle);
             }, underscore.bind(failure, undefined, req, res));
         });
     } else {
         client.headless(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w, "When Is - " + data[0].name);
+                createDom(data, r, w, "When Is - " + data.length > 0 ? data[0].name : defaultTitle);
             }, underscore.bind(failure, undefined, req, res));
         });
     }
