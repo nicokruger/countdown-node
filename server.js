@@ -60,13 +60,18 @@ var failure = function (req, resp, error) {
 };
 
 var defaultTitle = "When Is - Release dates for games, movies, music and everything in between";
+
 var createDom = function (data, resp, window, title){
     window.c.clear();
     if (typeof(title) === "undefined") {
         title = defaultTitle;
     }
     window.$('title').html(title);
-    window.m.putCountdowns(data);
+    if (data.length === 1) {
+        window.m.putCountdownOGP(data[0]);
+    } else {
+        window.m.putCountdowns(data);
+    }
     resp.writeHead(200, {"Content-type":"text/html; charset=utf-8"});
     resp.end(window.document.doctype + window.document.innerHTML);
 };
@@ -248,14 +253,13 @@ router.get('/:id', function(req, res) {
     if (typeof(query) === "undefined" || query["embedded"] !== "true") {
         client.nonpaginated(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                console.log("Data: " + data.length);
-                createDom(data, r, w, "When Is - " + data.length > 0 ? data[0].name : defaultTitle);
+                createDom(data, r, w, "When Is - " + (data.length > 0 ? data[0].name : defaultTitle));
             }, underscore.bind(failure, undefined, req, res));
         });
     } else {
         client.headless(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w, "When Is - " + data.length > 0 ? data[0].name : defaultTitle);
+                createDom(data, r, w, "When Is - " + (data.length > 0 ? data[0].name : defaultTitle));
             }, underscore.bind(failure, undefined, req, res));
         });
     }
