@@ -32,7 +32,6 @@ var controller = function (model, server) {
         for (f in params){
             ps += (f + "=" + encodeURIComponent(params[f]) + "&");
         }
-       // console.log("PARAM STRNIG: "+ ps);
         return ps;
     };
 
@@ -70,7 +69,6 @@ var controller = function (model, server) {
     var lastAction;
 
     var countdownAction = function (config)  {
-        console.log("Doing countdownAction " + server + config.url );
         $.ajax({
             url: server + config.url + createParamString(config.params),
             data: config.data,
@@ -82,7 +80,6 @@ var controller = function (model, server) {
                     if (config.failure !== undefined) {
                         config.failure(o.error);
                     }
-                    console.log("Countdown error: " + o.error);
                     return;
                 }
 
@@ -111,7 +108,6 @@ var controller = function (model, server) {
                 } else {
                     model.messages.error("No countdowns received.");
                 }
-                console.log("No countdowns received.");
             }
         };
     };
@@ -129,7 +125,6 @@ var controller = function (model, server) {
                 } else {
                     model.messages.error("No countdown received.");
                 }
-                console.log("No countdown received.");
             }
         };
     };
