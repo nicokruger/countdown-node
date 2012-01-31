@@ -110,45 +110,45 @@ var model = function (countdownHolder, head, options) {
                 this.countdowns.splice(where, 0, c);
             }
             // Name of countdown
-            var countdownName = $('<span class="countdown-name"><a href="' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></span>').appendTo($(outside));
+            var countdownName = $(' <span class="countdown-name"><a href="' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></span>').appendTo($(outside));
             
             // Tags
-            var tags = $('<span class="countdown-tags"></span>').appendTo(countdownName);
+            var tags = $(' <span class="countdown-tags"></span>').appendTo(countdownName);
             _(c.tags).each(function (tag) {
                 tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '/">' + tag + '</a></span>');
             });
            
-            var social = $('<span class="countdown-social"></span>').appendTo($(outside));
+            var social = $(' <span class="countdown-social"></span>').appendTo($(outside));
             // Social links
             if (options.socialLinks) {
                 social.append(this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id));
             }
             // Countdown itself
-            var cd = $("<span class=\"countdown-counter\" id=\"" + c_id + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
+            var cd = $(" <span class=\"countdown-counter\" id=\"" + c_id + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
 
             return $(outside);
         },
         _facebook_link : function(url) {
-            return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenis.co.za/' + url + '"' +
+            return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenagain.info/' + url + '"' +
                 'scrolling="no" frameborder="0" style="border:none; width: 85px; height:20px"></iframe></span>';
         },
         _twitter_link : function(url) {
             return '<span class="social-link"><a href="http://twitter.com/share" class="twitter-share-button" ' +
-                'data-url="http://www.whenis.co.za/' + url + '">Tweet</a></span>';
+                'data-url="http://www.whenagain.info/' + url + '">Tweet</a></span>';
         },
         _plusone_link : function(url) {
-            return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenis.co.za/' + url + '"></g:plusone></span>';
+            return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenagain.info/' + url + '"></g:plusone></span>';
         },
         messages: messages,
         _ogp : function(c) {
             return {
-                title: '<meta property="og:title" content="Whenis - ' + c.name +'" />',
+                title: '<meta property="og:title" content="When Again? ' + c.name +'" />',
                 //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
                 ogtype: '<meta property="og:type" content="website" />',
-                url: '<meta property="og:url" content="http://www.whenis.co.za/' + c._id.toString() + '" />',
-                description: '<meta property="og:description" content="WhenIs - Release Dates For Games, Movies, Music and Everything Else" />',
+                url: '<meta property="og:url" content="http://www.whenagain.info/' + c._id.toString() + '" />',
+                description: '<meta property="og:description" content="When Again? Release Dates For Games, Movies, Music and Everything Else" />',
                 metaTags: function(){
-                    return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="Whenis"/>' ].join("\n");
+                    return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="When Again?"/>' ].join("\n");
                 }
             };
         },

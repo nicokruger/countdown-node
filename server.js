@@ -36,7 +36,7 @@ var countdownProvider = new CountdownProvider("localhost", 27017);
 var logger = new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({ timestamp: true }),
-      new (winston.transports.File)({ filename: 'whenis.log', timestamp: true, json:false })
+      new (winston.transports.File)({ filename: 'whenagain.log', timestamp: true, json:false })
     ]
   });
 
@@ -59,7 +59,7 @@ var failure = function (req, resp, error) {
 
 };
 
-var defaultTitle = "When Is - Release dates for games, movies, music and everything in between";
+var defaultTitle = "When Again? Release dates for games, movies, music and everything in between.";
 
 var createDom = function (data, resp, window, title){
     window.c.clear();
@@ -174,7 +174,7 @@ router.get("/tags/:tag/:skip?", function (req, res) {
     else {
         client.paginated(req, res, function (r, w) {
             countdownProvider.search(searchParams, pagination, function(data){
-                createDom(data, r, w, "When Is - #" + req.params.tag);
+                createDom(data, r, w, "When Again? " + req.params.tag);
             });
         }, underscore.bind(failure, undefined, req, res));
     }
@@ -253,13 +253,13 @@ router.get('/:id', function(req, res) {
     if (typeof(query) === "undefined" || query["embedded"] !== "true") {
         client.nonpaginated(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w, "When Is - " + (data.length > 0 ? data[0].name : defaultTitle));
+                createDom(data, r, w, "When Again? " + (data.length > 0 ? data[0].name : defaultTitle));
             }, underscore.bind(failure, undefined, req, res));
         });
     } else {
         client.headless(req, res, function(r,w) {
             countdownProvider.retrieveById(req.params.id, function(data){
-                createDom(data, r, w, "When Is - " + (data.length > 0 ? data[0].name : defaultTitle));
+                createDom(data, r, w, "When Again? " + (data.length > 0 ? data[0].name : defaultTitle));
             }, underscore.bind(failure, undefined, req, res));
         });
     }
