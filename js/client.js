@@ -11,7 +11,7 @@ var google_analytics;
 if (typeof(process.env.GOOGLE_ANALYTICS_UA) !== "undefined") {
     var ua = process.env.GOOGLE_ANALYTICS_UA;
     console.log("Enabling google analytics with UA: " + ua);
-    google_analytics = underscore.template(fs.readFileSync("./google_analytics.html").toString(), {GOOGLE_ANALYTICS_UA:ua});
+    google_analytics = underscore.template(fs.readFileSync("html/google_analytics.html").toString(), {GOOGLE_ANALYTICS_UA:ua});
 } else {
     console.log("Not enabling google analytics. Please set GOOGLE_ANALYTICS_UA to a valid GA UA string for analytics.");
     google_analytics = "";
