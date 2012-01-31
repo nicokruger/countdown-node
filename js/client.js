@@ -3,7 +3,7 @@ var jsdom = require("jsdom");
 var fs = require("fs");
 var sys = require("util");
 var X = require("./XMLHttpRequest.js");
-var underscore = require("./public/vendor/underscore.js");
+var underscore = require("../public/vendor/underscore.js");
 
 var XMLHttpRequest = X.XMLHttpRequest;
 //global.XMLHttpRequest = X.XMLHttpRequest;
@@ -79,21 +79,21 @@ var createPage = function (completed, html, scripts) {
 };
 
 var scripts = [
-    fs.readFileSync("./public/vendor/jquery-1.7.1.min.js"),
-    fs.readFileSync("./public/vendor/underscore.js"),
-    fs.readFileSync("./public/vendor/timo-0.0.2.js"),
-    fs.readFileSync('./public/model.js'),
-    fs.readFileSync('./public/controller.js')
+    fs.readFileSync("public/vendor/jquery-1.7.1.min.js"),
+    fs.readFileSync("public/vendor/underscore.js"),
+    fs.readFileSync("public/vendor/timo-0.0.2.js"),
+    fs.readFileSync('public/model.js'),
+    fs.readFileSync('public/controller.js')
 ];
 
 // Create the normal DOM - for viewing countdowns
 createPage(function (window) {
     exports.paginatedClientWindow = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(),
-    {   "header" : fs.readFileSync("./header.html").toString(),
-        "content" : fs.readFileSync("./countdowns.html").toString(),
-        "pagination" : fs.readFileSync("./pagination.html").toString(),
-        "footer" : fs.readFileSync("./footer.html").toString(),
+}, underscore.template(fs.readFileSync("html/index.html").toString(),
+    {   "header" : fs.readFileSync("html/header.html").toString(),
+        "content" : fs.readFileSync("html/countdowns.html").toString(),
+        "pagination" : fs.readFileSync("html/pagination.html").toString(),
+        "footer" : fs.readFileSync("html/footer.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js",
         "google_analytics" : google_analytics
@@ -102,11 +102,11 @@ createPage(function (window) {
 
 createPage(function (window) {
     exports.nonpaginatedClientWindow = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(),
-    {   "header" : fs.readFileSync("./header.html").toString(),
-        "content" : fs.readFileSync("./countdowns.html").toString(),
+}, underscore.template(fs.readFileSync("html/index.html").toString(),
+    {   "header" : fs.readFileSync("html/header.html").toString(),
+        "content" : fs.readFileSync("html/countdowns.html").toString(),
         "pagination" : '',
-        "footer" : fs.readFileSync("./footer.html").toString(),
+        "footer" : fs.readFileSync("html/footer.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js",
         "google_analytics" : google_analytics
@@ -115,11 +115,11 @@ createPage(function (window) {
 // Create the DOM for the addpage
 createPage(function (window) {
     exports.addWindow = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(),
-    {   "header" : fs.readFileSync("./header.html").toString(),
-        "content" : fs.readFileSync("./add.html").toString(),
+}, underscore.template(fs.readFileSync("html/index.html").toString(),
+    {   "header" : fs.readFileSync("html/header.html").toString(),
+        "content" : fs.readFileSync("html/add.html").toString(),
         "pagination" : '<div></div>',
-        "footer" : fs.readFileSync("./footer.html").toString(),
+        "footer" : fs.readFileSync("html/footer.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs" : "/public/add.js",
         "google_analytics" : google_analytics
@@ -129,9 +129,9 @@ createPage(function (window) {
 // Create the headless DOM
 createPage(function (window) {
     exports.headlessWindow = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(),
+}, underscore.template(fs.readFileSync("html/index.html").toString(),
     {   "header" : "",
-        "content" : fs.readFileSync("./countdowns.html").toString(),
+        "content" : fs.readFileSync("html/countdowns.html").toString(),
         "pagination" : '<div></div>',
         "footer" : '<footer>Brought to you by <a href="http://www.whenis.co.za">When Is</a></footer>',
         "css" : "/public/whenis-headless.css",
@@ -143,11 +143,11 @@ createPage(function (window) {
 // Create the 503 DOM
 createPage(function (window) {
     exports.error503Window = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(),
-    {   "header" : fs.readFileSync("./header.html").toString(),
-        "content" : fs.readFileSync("./503.html").toString(),
+}, underscore.template(fs.readFileSync("html/index.html").toString(),
+    {   "header" : fs.readFileSync("html/header.html").toString(),
+        "content" : fs.readFileSync("html/503.html").toString(),
         "pagination" : '<div></div>',
-        "footer" : fs.readFileSync("./footer-contact.html").toString(),
+        "footer" : fs.readFileSync("html/footer-contact.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js",
         "google_analytics" : google_analytics
@@ -157,11 +157,11 @@ createPage(function (window) {
 // Create the 404 DOM
 createPage(function (window) {
     exports.error404Window = loadCompleted(window);
-}, underscore.template(fs.readFileSync("./index.html").toString(),
+}, underscore.template(fs.readFileSync("html/index.html").toString(),
     {   "header" : "",
-        "content" : fs.readFileSync("./404.html").toString(),
+        "content" : fs.readFileSync("html/404.html").toString(),
         "pagination" : '<div></div>',
-        "footer" : fs.readFileSync("./footer-contact.html").toString(),
+        "footer" : fs.readFileSync("html/footer-contact.html").toString(),
         "css" : "/public/whenis.css",
         "indexjs": "/public/index.js",
         "google_analytics" : google_analytics

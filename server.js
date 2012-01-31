@@ -5,9 +5,9 @@ var express = require('express');
 var winston = require("winston");
 var underscore = require("./public/vendor/underscore.js");
 
-var client = require("./client");
+var client = require("./js/client");
 var controller = require("./public/controller.js").controller;
-var CountdownProvider = require("./countdown_provider").CountdownProvider;
+var CountdownProvider = require("./js/countdown_provider").CountdownProvider;
 
 // Special NotFound exception for 404's
 function NotFound(msg){
@@ -16,9 +16,9 @@ function NotFound(msg){
   Error.captureStackTrace(this, arguments.callee);
 }
 NotFound.prototype.__proto__ = Error.prototype;
-var error404 = fs.readFileSync("404.html").toString();
-var error503 = fs.readFileSync("503.html").toString();
-var addHtml = fs.readFileSync("add.html").toString();
+var error404 = fs.readFileSync("html/404.html").toString();
+var error503 = fs.readFileSync("html/503.html").toString();
+var addHtml = fs.readFileSync("html/add.html").toString();
 
 
 //pagination limit and initial query marker
