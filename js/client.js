@@ -137,7 +137,7 @@ createPage(function (window) {
     {   "header" : "",
         "content" : fs.readFileSync("html/countdowns.html").toString(),
         "pagination" : '<div></div>',
-        "footer" : '<footer>Brought to you by <a href="http://www.whenagain.info">When Again?</a></footer>',
+        "footer" : '<footer>Brought to you by <a href="http://whenagain.info">When Again?</a></footer>',
         "css" : "/public" + VERSION_FINGERPRINT + "/whenagain-headless.css",
         "indexjs" : "/public" + VERSION_FINGERPRINT + "/index.headless.js",
         "version_fingerprint" : VERSION_FINGERPRINT,

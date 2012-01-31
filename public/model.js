@@ -129,15 +129,15 @@ var model = function (countdownHolder, head, options) {
             return $(outside);
         },
         _facebook_link : function(url) {
-            return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=www.whenagain.info/' + url + '"' +
+            return '<span class="social-link"><iframe src="http://www.facebook.com/plugins/like.php?layout=button_count&href=whenagain.info/' + url + '"' +
                 'scrolling="no" frameborder="0" style="border:none; width: 85px; height:20px"></iframe></span>';
         },
         _twitter_link : function(url) {
             return '<span class="social-link"><a href="http://twitter.com/share" class="twitter-share-button" ' +
-                'data-url="http://www.whenagain.info/' + url + '">Tweet</a></span>';
+                'data-url="http://whenagain.info/' + url + '">Tweet</a></span>';
         },
         _plusone_link : function(url) {
-            return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://www.whenagain.info/' + url + '"></g:plusone></span>';
+            return '<span class="social-link"><g:plusone size="medium" annotation="none" href="http://whenagain.info/' + url + '"></g:plusone></span>';
         },
         messages: messages,
         _ogp : function(c) {
@@ -145,7 +145,7 @@ var model = function (countdownHolder, head, options) {
                 title: '<meta property="og:title" content="When Again? ' + c.name +'" />',
                 //this is not scraped atm :( it's also quite limiting in possible values http://ogp.me/#types
                 ogtype: '<meta property="og:type" content="website" />',
-                url: '<meta property="og:url" content="http://www.whenagain.info/' + c._id.toString() + '" />',
+                url: '<meta property="og:url" content="http://whenagain.info/' + c._id.toString() + '" />',
                 description: '<meta property="og:description" content="When Again? Release Dates For Games, Movies, Music and Everything Else" />',
                 metaTags: function(){
                     return [ this.title, this.ogtype, this.url, this.description, '<meta property="og:site_name" content="When Again?"/>' ].join("\n");
