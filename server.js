@@ -53,7 +53,7 @@ var failure = function (req, resp, error) {
     client.error503(req, resp, function (r,w) {
         var $ = w.$;
         $("#message").html(msg);
-        r.writeHead(503, {"Content-type":"text/html"});
+        r.writeHead(503, {"Content-type":"text/html; charset=utf-8"});
         r.end(w.document.doctype + w.document.innerHTML);
     });
 
@@ -67,7 +67,7 @@ var createDom = function (data, resp, window, title){
     }
     window.$('title').html(title);
     window.m.putCountdowns(data);
-    resp.writeHead(200, {"Content-type":"text/html"});
+    resp.writeHead(200, {"Content-type":"text/html; charset=utf-8"});
     resp.end(window.document.doctype + window.document.innerHTML);
 };
 
@@ -128,7 +128,7 @@ router.get(/^\/public.*?\/.*/, function (req, res) {
 
 router.get("/add", function (req, res) {
     client.add(req, res, function (r,w) {
-        res.writeHead(200, {"Content-type":"text/html"});
+        res.writeHead(200, {"Content-type":"text/html; charset=utf-8"});
         res.end(w.document.doctype + w.document.innerHTML);
     }, underscore.bind(failure, undefined, req, res));
 });
@@ -199,7 +199,7 @@ router.get("/countdowns/:skip?", function (req, res) {
         }, underscore.bind(failure, undefined, req, res));
     }
     else {
-        req.writeHead(400, {"Content-type":"text/html"});
+        req.writeHead(400, {"Content-type":"text/html; charset=utf-8"});
         req.end("Not valid");
     }
 });
@@ -271,7 +271,7 @@ router.error(function(err, req, res, next){
     if (err instanceof NotFound) {
         // our special 404
         client.error404(req, res, function (r,w) {
-            res.writeHead(404, {"Content-type":"text/html"});
+            res.writeHead(404, {"Content-type":"text/html; charset=utf-8"});
             res.end(w.document.doctype + w.document.innerHTML);
         });
     } else {
