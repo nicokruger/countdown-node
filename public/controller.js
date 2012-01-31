@@ -12,7 +12,7 @@ var controller = function (model, server) {
     // This is crappy code - I apologise, but it's late and this needs to work :(
     var getLastParts = function(path){
         if(path == "/") return {path: "future", skip: 0 };
-        var parts = path.split('/').splice(1);
+        var parts = path.split('/').splice(1, path.length);
         if (parts.length == 1) {
             return {
                 path: parts[0],

@@ -13,7 +13,8 @@ var formatDate = function (t) {
     var d = new Date(t);
     return d.getFullYear() + "-" + timo.pad(d.getMonth()+1,2) + "-" + timo.pad(d.getDate(),2) + " " + timo.pad(d.getHours(),2) + ":" + timo.pad(d.getMinutes(),2) + " UTC";
 };
-var timoTypes = [timo.normalCounterType, timo.noCounterType, timo.ledCounterType(ledTheme)];
+//var timoTypes = [timo.normalCounterType, timo.noCounterType, timo.ledCounterType(ledTheme)];
+var timoTypes = [timo.normalCounterType, timo.noCounterType];
 
 var logger = function (where) {
     return {
