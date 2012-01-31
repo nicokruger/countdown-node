@@ -17,6 +17,7 @@ if (typeof(process.env.GOOGLE_ANALYTICS_UA) !== "undefined") {
     google_analytics = "";
 }
 
+var VERSION_FINGERPRINT = (new Date()).getTime();
 
 var loadCompleted = function (window) {
     var $ = window.$;
@@ -94,8 +95,9 @@ createPage(function (window) {
         "content" : fs.readFileSync("html/countdowns.html").toString(),
         "pagination" : fs.readFileSync("html/pagination.html").toString(),
         "footer" : fs.readFileSync("html/footer.html").toString(),
-        "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js",
+        "css" : "/public" + VERSION_FINGERPRINT + "/whenis.css",
+        "indexjs": "/public" + VERSION_FINGERPRINT + "/index.js",
+        "version_fingerprint" : VERSION_FINGERPRINT,
         "google_analytics" : google_analytics
     }
 ), scripts);
@@ -107,8 +109,9 @@ createPage(function (window) {
         "content" : fs.readFileSync("html/countdowns.html").toString(),
         "pagination" : '',
         "footer" : fs.readFileSync("html/footer.html").toString(),
-        "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js",
+        "css" : "/public" + VERSION_FINGERPRINT + "/whenis.css",
+        "indexjs": "/public" + VERSION_FINGERPRINT + "/index.js",
+        "version_fingerprint" : VERSION_FINGERPRINT,
         "google_analytics" : google_analytics
     }
 ), scripts);
@@ -120,8 +123,9 @@ createPage(function (window) {
         "content" : fs.readFileSync("html/add.html").toString(),
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("html/footer.html").toString(),
-        "css" : "/public/whenis.css",
-        "indexjs" : "/public/add.js",
+        "css" : "/public" + VERSION_FINGERPRINT + "/whenis.css",
+        "indexjs" : "/public" + VERSION_FINGERPRINT + "/add.js",
+        "version_fingerprint" : VERSION_FINGERPRINT,
         "google_analytics" : google_analytics
     }
 ), scripts);
@@ -134,8 +138,9 @@ createPage(function (window) {
         "content" : fs.readFileSync("html/countdowns.html").toString(),
         "pagination" : '<div></div>',
         "footer" : '<footer>Brought to you by <a href="http://www.whenis.co.za">When Is</a></footer>',
-        "css" : "/public/whenis-headless.css",
-        "indexjs" : "/public/index.headless.js",
+        "css" : "/public" + VERSION_FINGERPRINT + "/whenis-headless.css",
+        "indexjs" : "/public" + VERSION_FINGERPRINT + "/index.headless.js",
+        "version_fingerprint" : VERSION_FINGERPRINT,
         "google_analytics" : google_analytics
     }
 ), scripts);
@@ -148,8 +153,9 @@ createPage(function (window) {
         "content" : fs.readFileSync("html/503.html").toString(),
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("html/footer-contact.html").toString(),
-        "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js",
+        "css" : "/public" + VERSION_FINGERPRINT + "/whenis.css",
+        "indexjs": "/public" + VERSION_FINGERPRINT + "/index.js",
+        "version_fingerprint" : VERSION_FINGERPRINT,
         "google_analytics" : google_analytics
     }
 ), scripts);
@@ -162,8 +168,9 @@ createPage(function (window) {
         "content" : fs.readFileSync("html/404.html").toString(),
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("html/footer-contact.html").toString(),
-        "css" : "/public/whenis.css",
-        "indexjs": "/public/index.js",
+        "css" : "/public" + VERSION_FINGERPRINT + "/whenis.css",
+        "indexjs": "/public" + VERSION_FINGERPRINT + "/index.js",
+        "version_fingerprint" : VERSION_FINGERPRINT,
         "google_analytics" : google_analytics
     }
 ), scripts);

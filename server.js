@@ -28,7 +28,7 @@ var defaultLimit = 4,
 // http router
 var router = express.createServer();
 // Static file server
-var file = new (nodeStatic.Server)("./");
+var file = new (nodeStatic.Server)("./public");
 // countdowns from mongo!!
 var countdownProvider = new CountdownProvider("localhost", 27017);
 
@@ -111,7 +111,7 @@ var defaultRoute = function(req, res){
 
 
 router.configure( function(req,res) {
-    router.use('/public', express.static('./public')); // static is a reserved word
+    //router.use('/public:fingerprint', express.static('./public')); // static is a reserved word
     router.use(request_logger);
     router.use(express.bodyParser());
     router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -119,6 +119,12 @@ router.configure( function(req,res) {
 });
 
 router.get("/", defaultRoute);
+
+router.get(/^\/public.*?\/.*/, function (req, res) {
+    req.url = req.url.replace(/^\/public.*?\//, "");
+    console.log("File: " + req.url);
+    file.serve(req,res);
+});
 
 router.get("/add", function (req, res) {
     client.add(req, res, function (r,w) {
