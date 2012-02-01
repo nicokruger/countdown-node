@@ -120,7 +120,7 @@ createPage(function (window) {
     exports.addWindow = loadCompleted(window);
 }, underscore.template(fs.readFileSync("html/index.html").toString(),
     {   "header" : fs.readFileSync("html/header.html").toString(),
-        "content" : fs.readFileSync("html/add.html").toString(),
+        "content" : underscore.template(fs.readFileSync("html/add.html").toString(), { "version_fingerprint" : VERSION_FINGERPRINT } ),
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("html/footer.html").toString(),
         "css" : "/public" + VERSION_FINGERPRINT + "/whenagain.css",

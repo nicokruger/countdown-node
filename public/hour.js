@@ -177,29 +177,38 @@
             var hour = $("<select></select>").appendTo(holder);
             var minute = $("<select></select>").appendTo(holder);
             var ampm = $("<select></select>").appendTo(holder);
+            ampm.append("<option>AM</option>");
+            ampm.append("<option>PM</option>");
+                
+            var makeHours = function(am) {
+                $(hour).html("");
+                _(_.range(12)).each(function (_hour) {
+                    var h;
+                    if (am) {
+                        h = _hour;
+                    } else {
+                        h = _hour + 12;
+                    }
+                    $(hour).append("<option>" + ((h < 10) ? "0" + h : h) + "</option>");
+                });
+                
+            };
+            makeHours(true);
 
-            _(_.range(12)).each(function (h) {
-                $(hour).append("<option>" + ((h < 10) ? "0" + h : h) + "</option>");
-            });
             _(["00", "15", "30", "45"]).each(function (m) {
                 $(minute).append("<option>" + m + "</option>");
             });
-            ampm.append("<option>AM</option>");
-            ampm.append("<option>PM</option>");
 
             hour.change(function () {
-                hi.hour(parseInt($(hour).val(), 10));
+                var h = parseInt($(hour).val(), 10);
+                hi.hour(h);
             });
             minute.change(function () {
                 hi.minute(parseInt($(minute).val(), 10));
             });
 
             ampm.change(function () {
-                var v = $(ampm).val();
-                if (v === "PM") {
-                    hour += 12;
-                }
-                hi.hour((hi.hour() < 12) ? hi.hour() + 12 : hi.hour());
+                makeHours($(ampm).val() === "AM");
             });
         });
 
