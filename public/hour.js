@@ -10,18 +10,18 @@
                 var parts = val.split(":");
                 h = parseInt(parts[0], 10);
                 m = parseInt(parts[1], 10);
-                if (h > 23) {
-                    h = 23;
-                }
             } else if (val.length == 4) {
                 h = parseInt(val.slice(0,2), 10);
                 m = parseInt(val.slice(2,4), 10);
-                if (m > 59) {
-                    m = 59;
-                }
             } else {
                 h = 0;
                 m = 0;
+            }
+            if (h > 23) {
+                h = 23;
+            }
+            if (m > 59) {
+                m = 59;
             }
 
             return [h,m];
@@ -29,14 +29,15 @@
         var selector;
         var selectHour = function () {
             var select = function () {
+                var el_val = $(el).val();
                 var e = $(el).get()[0];
                 if (e.setSelectionRange) {
                     e.focus();
-                    e.setSelectionRange(0,2);
+                    e.setSelectionRange(0,el_val.indexOf(":"));
                 } else if (e.createTextRange) {
                     var range = e.createTextRange();
                     range.collapse(true);
-                    range.moveEnd('character', 2);
+                    range.moveEnd('character', el_val.indexOf(":"));
                     range.moveStart('character', 0);
                     range.select();
                 }
@@ -69,14 +70,15 @@
         var selectMinute = function () {
             var select = function () {
                 var e = $(el).get()[0];
+                var el_val = $(el).val();
                 if (e.setSelectionRange) {
                     e.focus();
-                    e.setSelectionRange(3,5);
+                    e.setSelectionRange(el_val.indexOf(":")+1,el_val.length);
                 } else if (e.createTextRange) {
                     var range = e.createTextRange();
                     range.collapse(true);
-                    range.moveEnd('character', 5);
-                    range.moveStart('character', 3);
+                    range.moveEnd('character', el_val.length);
+                    range.moveStart('character', el_val.indexOf(":")+1);
                     range.select();
                 }
             };
@@ -128,14 +130,14 @@
             } else if (e.which == 40) {
                 selector.decrement();
                 return false;
-            } else if (e.which == 37 || e.which == 39) {
+            } else if (e.which == 37 || e.which == 39) { // left or right
                 var s = selector.toggle();
                 selector = s();
                 return false;
             }
         });
         $(el).keypress(function (e) {
-            if (event.which == 58) {
+            if (event.which == 58) { // :
                 var s = selector.toggle();
                 selector = s();
                 e.preventDefault();
