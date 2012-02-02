@@ -183,17 +183,21 @@
             ampm.append("<option>PM</option>");
                 
             var makeHours = function(am) {
+                var prevVal = parseInt($(hour).val(), 10);
                 $(hour).html("");
                 _(_.range(12)).each(function (_hour) {
-                    var h;
+                    var h; var mod;
                     if (am) {
-                        h = _hour;
+                        h = _hour; mod = function (x) { return x - 12; };
                     } else {
-                        h = _hour + 12;
+                        h = _hour + 12; mod = function (x) { return x + 12; };
                     }
-                    $(hour).append("<option>" + ((h < 10) ? "0" + h : h) + "</option>");
+                    $(hour).append("<option " + (((h === prevVal) || (h === mod(prevVal))) ? "selected" : "") + ">" + ((h < 10) ? "0" + h : h) + "</option>");
                 });
-                
+                setTimeout(function () {
+                    var h = parseInt($(hour).val(), 10);
+                    hi.hour(h);
+                }, 0);
             };
             makeHours(true);
 
