@@ -110,7 +110,7 @@ var model = function (countdownHolder, head, options) {
                 this.countdowns.splice(where, 0, c);
             }
             // Name of countdown
-            var countdownName = $(' <span class="countdown-name"><div><a href="/' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></div></span>').appendTo($(outside));
+            var countdownName = $(' <div class="countdown-name"><div><a href="/' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></div></div>').appendTo($(outside));
             
             // Tags
             var tags = $('<ul class="countdown-tags"></ul>').appendTo("<div></div>").appendTo(countdownName);
@@ -118,14 +118,14 @@ var model = function (countdownHolder, head, options) {
                 tags.append(' <li class="countdown-tag"><a href="/tags/' + tag + '/">' + tag + '</a></li> ');
             });
            
+            // Countdown itself
+            var cd = $(" <div class=\"countdown-counter\" id=\"" + c_id + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</div>").appendTo($(outside));
+
             var social = $(' <span class="countdown-social"></span>').appendTo($(outside));
             // Social links
             if (options.socialLinks) {
                 social.append(this._twitter_link(c_id) + this._facebook_link(c_id) + this._plusone_link(c_id));
             }
-            // Countdown itself
-            var cd = $(" <span class=\"countdown-counter\" id=\"" + c_id + "\" data-eventdate=\"" + c.eventDate + "\">" + formatDate(c.eventDate) + "</span>").appendTo($(outside));
-
             return $(outside);
         },
         _facebook_link : function(url) {
