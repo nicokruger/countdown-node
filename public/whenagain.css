@@ -110,7 +110,7 @@ span.countdown-name {
     font-size: large;
     font-weight: normal;
 }
-span.countdown-name > a {
+span.countdown-name > div > a {
     text-decoration: none;
     display: inline-block;
     font: normal normal normal 22px Arial, sans-serif;
@@ -129,14 +129,14 @@ span.social-link {
 }
 span.countdown-name > a.visited {
     text-decoration: none;
-    display: inline-block;
+    display: block;
     font: normal normal normal 22px Arial, sans-serif;
     /*color: rgb(82, 139, 183);*/
     color: black;
 }
 
-span.countdown-tags {
-    display: block;
+.countdown-tags {
+    display: inline;
     width: 70px;
     margin: 0px;
     padding: 0px;
@@ -144,14 +144,15 @@ span.countdown-tags {
     color: gray;
 }
 
-span.countdown-tag {
-    padding-right:5px;
+.countdown-tag {
+  display: inline;
+  list-style: none;
 }
-span.countdown-tag > a, span.countdown-tag > a:visited {
+.countdown-tag > a, span.countdown-tag > a:visited {
     text-decoration: none;
     color: gray;
 }
-span.countdown-tag > a:hover {
+.countdown-tag > a:hover {
     color: lightgrey;
 }
 

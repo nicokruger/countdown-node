@@ -110,12 +110,12 @@ var model = function (countdownHolder, head, options) {
                 this.countdowns.splice(where, 0, c);
             }
             // Name of countdown
-            var countdownName = $(' <span class="countdown-name"><a href="/' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></span>').appendTo($(outside));
+            var countdownName = $(' <span class="countdown-name"><div><a href="/' + (options.counterLink ? c_id : "#") + '">' + c.name + '</a></div></span>').appendTo($(outside));
             
             // Tags
-            var tags = $(' <span class="countdown-tags"></span>').appendTo(countdownName);
+            var tags = $('<ul class="countdown-tags"></ul>').appendTo("<div></div>").appendTo(countdownName);
             _(c.tags).each(function (tag) {
-                tags.append('<span class="countdown-tag"><a href="/tags/' + tag + '/">' + tag + '</a></span>');
+                tags.append(' <li class="countdown-tag"><a href="/tags/' + tag + '/">' + tag + '</a></li> ');
             });
            
             var social = $(' <span class="countdown-social"></span>').appendTo($(outside));
