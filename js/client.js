@@ -145,12 +145,12 @@ createPage(function (window) {
     }
 ), scripts);
 
-// Create the 503 DOM
+// Create the 500 DOM
 createPage(function (window) {
-    exports.error503Window = loadCompleted(window);
+    exports.error500Window = loadCompleted(window);
 }, underscore.template(fs.readFileSync("html/index.html").toString(),
     {   "header" : fs.readFileSync("html/header.html").toString(),
-        "content" : fs.readFileSync("html/503.html").toString(),
+        "content" : fs.readFileSync("html/500.html").toString(),
         "pagination" : '<div></div>',
         "footer" : fs.readFileSync("html/footer-contact.html").toString(),
         "css" : "/public" + VERSION_FINGERPRINT + "/whenagain.css",
@@ -191,8 +191,8 @@ exports.headless = function (req, resp, sendClient) {
     sendClient(resp, this.headlessWindow);
 };
 
-exports.error503 = function (req, resp, sendClient) {
-    sendClient(resp, this.error503Window);
+exports.error500 = function (req, resp, sendClient) {
+    sendClient(resp, this.error500Window);
 };
 
 exports.error404 = function (req, resp, sendClient) {

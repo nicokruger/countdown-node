@@ -3,8 +3,8 @@ var Connection = require('mongodb').Connection;
 var Server = require('mongodb').Server;
 var ObjectID = require('mongodb').ObjectID;
 
-var CountdownProvider = function(host, port) {
-    this.db = new Db('countDownDB', new Server(host, port, {auto_reconnect: true}, {}), {
+var CountdownProvider = function(host, port, dbname) {
+    this.db = new Db(dbname, new Server(host, port, {auto_reconnect: true}, {}), {
         reaperTimeout: 15000, reaperInterval: 5000,
         numberOfRetries: 2, retryMilliseconds:2000});
 
@@ -122,9 +122,7 @@ CountdownProvider.prototype.insert = function(countdown, callback, failure) {
     countdown.eventDate = new Date(countdown.eventDate);
     this.collection(function (error, coll) {
         if (error) failure(error);
-        console.log("Inserting: " + JSON.stringify(countdown));
         coll.insert(countdown, {safe: true}, function(error, docs) {
-            console.log("Got: " + JSON.stringify(docs));
             if (error) {
                 if (typeof(failure) !== "undefined") {
                     failure(error);
@@ -141,8 +139,6 @@ CountdownProvider.prototype.insert = function(countdown, callback, failure) {
 
 CountdownProvider.prototype.paginatedQuery = function(query, sortBy, pagination, callback, failure) {
     this.mongoQuery(function(collection){
-
-        console.log("QUERY : "+ JSON.stringify(query) + " skipping: "+ pagination.skip + " limit: " + pagination.limit);
         var cursor = collection.find(query);
         return cursor.sort(sortBy).skip(pagination.skip).limit(pagination.limit);
     }, callback, failure);
@@ -168,10 +164,8 @@ CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
                     }
                 }
                 else {
-                    console.log("Got results "+results.length);
                     var i;
                     for (i = 0; i < results.length; i++){
-                        //console.log(results[i].name);
                         // Convert all results to millis
                         if(results[i].eventDate !== undefined){
                             results[i].eventDate = results[i].eventDate.getTime();
