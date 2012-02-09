@@ -49,7 +49,6 @@ function request(url, data, method, headers, cb) {
     method: method,
     headers: headers
   };
-  console.log(JSON.stringify(headers));
   // Perform the request operation
   request = client.request(options, function(response){
     response.setEncoding('utf8');

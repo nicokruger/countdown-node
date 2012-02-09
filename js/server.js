@@ -1,6 +1,11 @@
 var fs = require("fs"), url = require("url"), nodeStatic = require("node-static");
 var express = require('express');
 var winston = require("winston");
+
+// default transports
+if (typeof(winston.loggers.options.transports) === "undefined") winston.loggers.options.transports = [];
+winston.loggers.options.transports.push(new (winston.transports.Console)({ timestamp: true, colorize:true }));
+
 var _ = require("../public/vendor/underscore.js");
 var client = require("./client");
 var controller = require("../public/controller.js").controller;
@@ -22,7 +27,6 @@ function NotFound(msg){
 }
 NotFound.prototype.__proto__ = Error.prototype;
 
-
 var makeServer = function (options) {
     options = _.extend(defaults, typeof(options) !== "undefined" ? options : {});
 
@@ -33,19 +37,23 @@ var makeServer = function (options) {
     // countdowns from mongo!!
     var countdownProvider = new CountdownProvider(options.databaseHost, options.databasePort, options.database);
 
-    // winston logging
-    var transports = [new (winston.transports.Console)({ timestamp: true })];
-    if (options.logging) {
-        transports.push(new (winston.transports.File)({ filename: 'whenagain.log', timestamp: true, json:false }));
-    }
-    var logger = new (winston.Logger)({
-        transports: transports
-    });
     // make winston pretty print stuff on console when file-logging is turned off
-    if (!options.logging) logger.cli();
-
+    winston.loggers.add("server");
+    var logger = winston.loggers.get("server"),
+        request_log;
+    if (options.logging) {
+        winston.loggers.add("requests", {
+            console:{
+                colorize:true
+            },file:{
+                filename:"requests.log",
+                timestamp:true
+            }
+        });
+        request_log = winston.loggers.get("requests");
+    }
     var request_logger = function (req, res, next) {
-        logger.info("[REQ]", {url:req.url, ip:req.connection.remoteAddress});
+        request_log.info("[REQ]", {url:req.url, ip:req.connection.remoteAddress, headers: JSON.stringify(req.headers)});
         next();
     };
     
@@ -99,9 +107,10 @@ var makeServer = function (options) {
     };
         
     var defaultRoute = function(req, res){
-        console.log(JSON.stringify(req.headers));
         var skip = isNaN(parseInt(req.params.skip, 10)) ? 0 : parseInt(req.params.skip, 10),
             pagination = {limit: options.paginationLimit, skip: skip};
+
+        console.log("Accepts json???????????? html?????????? " + req.accepts("json") + " ----- " + req.accepts("html"));
         if(req.accepts('json')){
             countdownProvider.future(pagination, function(data){
                 res.json({countdowns:data});
@@ -119,7 +128,7 @@ var makeServer = function (options) {
 
     router.configure( function(req,res) {
         //router.use('/public:fingerprint', express.static('./public')); // static is a reserved word
-        router.use(request_logger);
+        if (options.logging) router.use(request_logger);
         router.use(express.bodyParser());
         router.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
@@ -211,6 +220,7 @@ var makeServer = function (options) {
     router.post('/upsert', function (req, res) {
         var countdown = countdownFromReq(req);
         countdownProvider.upsert(countdown, function(data) {
+            logger.info("Countdown upserted: " + JSON.stringify(data));
             res.json({countdown:data});
         }, _.bind(failure, undefined, req, res));
     });
@@ -218,10 +228,10 @@ var makeServer = function (options) {
     //scrapers should use this
     router.post('/upsertmulti', function(req, res) {
         var countdowns = req.body.countdowns;
-            countdownProvider.upsertMulti(countdowns, function(data) {
-                res.json(data);
-            }, _.bind(failure, undefined, req, res));
-
+        countdownProvider.upsertMulti(countdowns, function(data) {
+            logger.info("Multiple countdowns upserted: " + JSON.stringify(data));
+            res.json(data);
+        }, _.bind(failure, undefined, req, res));
     });
 
     router.post('/insert', function (req, res) {
@@ -247,19 +257,25 @@ var makeServer = function (options) {
         }
         var query = url.parse(req.url,true).query;
 
-        // determine which client to use - normal or headless by looking at the headless query parameter
-        if (typeof(query) === "undefined" || query["embedded"] !== "true") {
-            client.nonpaginated(req, res, function(r,w) {
-                countdownProvider.retrieveById(req.params.id, function(data){
-                    createDom(data, r, w, "When Again? " + (data.length > 0 ? data[0].name : defaultTitle));
-                }, _.bind(failure, undefined, req, res));
-            });
-        } else {
-            client.headless(req, res, function(r,w) {
-                countdownProvider.retrieveById(req.params.id, function(data){
-                    createDom(data, r, w, "When Again? " + (data.length > 0 ? data[0].name : defaultTitle));
-                }, _.bind(failure, undefined, req, res));
-            });
+        if (req.accepts("html")) {
+            // determine which client to use - normal or headless by looking at the headless query parameter
+            if (typeof(query) === "undefined" || query["embedded"] !== "true") {
+                client.nonpaginated(req, res, function(r,w) {
+                    countdownProvider.retrieveById(req.params.id, function(data){
+                        createDom(data, r, w, "When Again? " + (data.length > 0 ? data[0].name : defaultTitle));
+                    }, _.bind(failure, undefined, req, res));
+                });
+            } else {
+                client.headless(req, res, function(r,w) {
+                    countdownProvider.retrieveById(req.params.id, function(data){
+                        createDom(data, r, w, "When Again? " + (data.length > 0 ? data[0].name : defaultTitle));
+                    }, _.bind(failure, undefined, req, res));
+                });
+            }
+        } else if (req.accepts("json")) {
+            countdownProvider.retrieveById(req.params.id, function(data){
+                        res.json({countdown:data});
+                    }, _.bind(failure, undefined, req, res));
         }
     });
 
@@ -285,7 +301,8 @@ var makeServer = function (options) {
     });
 
     return {
-        listen: function () {
+        listen: function (callback) {
+            console.log("listening on " + options.serverPort);
             router.listen(options.serverPort);
         },
         close: function () {

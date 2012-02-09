@@ -3,6 +3,10 @@ var Connection = require('mongodb').Connection;
 var Server = require('mongodb').Server;
 var ObjectID = require('mongodb').ObjectID;
 
+var winston = require("winston");
+winston.loggers.add("countdown_provider");
+var logger = winston.loggers.get("countdown_provider");
+
 var CountdownProvider = function(host, port, dbname) {
     this.db = new Db(dbname, new Server(host, port, {auto_reconnect: true}, {}), {
         reaperTimeout: 15000, reaperInterval: 5000,
@@ -19,7 +23,6 @@ var CountdownProvider = function(host, port, dbname) {
 CountdownProvider.prototype.collection = function(callback, failure){
     this.db.collection('countdown', function(error, coll){
         if(error) {
-            console.log("error: " + error);
             callback(error);
         }
         else {
@@ -95,7 +98,7 @@ CountdownProvider.prototype.upsert = function(countdown, callback, failure) {
                 if (typeof(failure) !== "undefined") {
                     failure(error);
                 } else {
-                    console.log("[no error handler] Error: " + error);
+                    logger.error("[no error handler] " + error);
                 }
             } else {
                callback(docs[0]);
@@ -108,6 +111,7 @@ CountdownProvider.prototype.upsertMulti = function(countdowns, callback, failure
     var i,
         results = [];
     
+    // TODO: possible async issue here?
     for (i = 0; i < countdowns.length; i++){
         countdowns[i].eventDate = new Date(countdowns[i].eventDate);
 
@@ -127,7 +131,7 @@ CountdownProvider.prototype.insert = function(countdown, callback, failure) {
                 if (typeof(failure) !== "undefined") {
                     failure(error);
                 } else {
-                    console.log("[no error handler] Error: " + error);
+                    logger.error("[no error handler] " + error);
                 }
             } else {
                 callback(docs[0]);
@@ -152,7 +156,7 @@ CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
             if (typeof(failure) !== "undefined") {
                 failure(error);
             } else {
-                console.log("[no error handler]: " + error);
+                logger.error("[no error handler] " + error);
             }
         } else {
             query(coll).toArray(function(error, results) {
@@ -160,7 +164,7 @@ CountdownProvider.prototype.mongoQuery = function(query, callback, failure) {
                     if (typeof(failure) !== "undefined") {
                         failure(error);
                     } else {
-                        console.log("[no error handler]: " + error);
+                        logger.error("[no error handler] " + error);
                     }
                 }
                 else {
